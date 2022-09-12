@@ -1,0 +1,4 @@
+\select@language {french}
+\beamer@sectionintoc {1}{Vraisemblance}{3}{0}{1}
+\beamer@sectionintoc {2}{Maximum de vraisemblance}{10}{0}{2}
+\beamer@sectionintoc {3}{Interpr\IeC {\'e}tation du principe du MV}{16}{0}{3}

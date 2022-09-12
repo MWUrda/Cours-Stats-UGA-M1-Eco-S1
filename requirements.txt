@@ -1,0 +1,8 @@
+ipywidgets
+matplotlib
+numpy
+scipy
+session_info  
+IPython
+pandas
+statsmodels.api

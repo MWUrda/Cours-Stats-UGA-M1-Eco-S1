@@ -1,0 +1,541 @@
+%\documentclass[ignorenonframetext, compress, 9pt, xcolor=svgnames]{beamer} 
+\input{../Config_diapos}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\usepackage{enumerate}   
+\usepackage{multirow}
+\usepackage{txfonts}
+\usepackage{mathrsfs}
+\usepackage{pgfplots}
+\pgfplotsset{compat = newest}
+\usetikzlibrary{positioning, arrows.meta}
+\usepgfplotslibrary{fillbetween}
+\newcommand{\A}{(0,0) ++(135:2) circle (2)}
+\newcommand{\B}{(0,0) ++(45:2) circle (2)}
+\DeclareMathOperator{\C}{C}
+\DeclareMathOperator{\util}{u}
+%\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\setbeamersize{text margin left=1.2cm,text margin right=1.2cm} 
+\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\usepackage{xr}
+%\externaldocument{Econometrie1_UGA_P2e}
+  \usepackage{eso-pic}
+%\newcommand\AtPagemyUpperLeft[1]{\AtPageLowerLeft{%
+%\put(\LenToUnit{0.9\paperwidth},\LenToUnit{0.85\paperheight}){#1}}}
+%\AddToShipoutPictureFG{
+ % \AtPagemyUpperLeft{{\includegraphics[width=1.1cm,keepaspectratio]{logoUGA2020.pdf}}}
+%}%
+
+%\setbeamercolor{title}{fg=black}
+%\setbeamercolor{frametitle}{fg=black}
+%\setbeamercolor{section in head/foot}{fg=black}
+%\setbeamercolor{author in head/foot}{bg=Brown}
+%\setbeamercolor{date in head/foot}{fg=Brown}
+\AtBeginSection[]
+  {
+    \ifnum \value{framenumber}>1
+      \begin{frame}<beamer>
+      \frametitle{Plan}
+      \tableofcontents[currentsection]
+      \end{frame}
+    \else
+    \fi
+  }
+\setbeamertemplate{section page}
+{
+    \begin{centering}
+    \begin{beamercolorbox}[sep=11pt,center]{part title}
+    \usebeamerfont{section title}\thesection.~\insertsection\par
+    \end{beamercolorbox}
+    \end{centering}
+}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}}
+\title[]{ \textbf{Introduction au méthodes statistiques}}
+\subtitle{Cours 1}
+\date{\today}
+\author{Michal W. Urdanivia\inst{*}}
+\institute{\inst{*}UGA, Facult\'e d'\'Economie, GAEL, \\e-mail: \href{mailto:michal.wong-urdanivia@univ-grenoble-alpes.fr}{michal.wong-urdanivia@univ-grenoble-alpes.fr}}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}
+%}
+
+\begin{document}
+%%% TIKZ STUFF
+\usetikzlibrary{positioning}
+\usetikzlibrary{snakes}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{matrix,shapes,arrows,fit,tikzmark}
+\usetikzlibrary{shapes}
+\tikzset{   
+        every picture/.style={remember picture,baseline},
+        every node/.style={anchor=base,align=center,outer sep=1.5pt},
+        every path/.style={thick},
+        }
+\newcommand\marktopleft[1]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-a) at (-.3em,.3em) {};%
+}
+\newcommand\markbottomright[2]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-b) at (0em,0em) {};%
+}
+\tikzstyle{every picture}+=[remember picture] 
+\tikzstyle{mybox} =[draw=black, very thick, rectangle, inner sep=10pt, inner ysep=20pt]
+\tikzstyle{fancytitle} =[draw=black,fill=red, text=white]
+\tikzstyle{observed}=[draw,circle,fill=gray!50]
+
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}
+ \tableofcontents
+    \end{frame}
+%\begin{frame}
+%\frametitle{Contenu}
+%\tableofcontents[pausesections, pausesubsections]
+%\end{frame}
+
+%\section{Qu'est-ce que l’économétrie ? A quoi (à qui) ça sert ?}
+%\frame{\sectionpage}
+%\begin{frame}
+%  \tableofcontents  
+%\end{frame}
+
+\section{Présentation}
+\frame{\sectionpage}
+
+\begin{frame}[allowframebreaks]{Objectifs}
+\begin{itemize}
+    \item Une introduction formelle et solide à la méthodologie statistique.
+    \item Une discussion de la pertinence/adéquation des méthodes selon les/aux applications.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Divers}
+    \begin{itemize}
+        \item \textbf{\underline{Prérequis:}} cours de probabilités, analyse, algèbre(calcul vectoriel, matriciel, orthogonalité).
+        \item \textbf{\underline{Références:}} 
+        \begin{enumerate}[-]
+            \item Le matériel donné pour le cours d'abord.
+            \item Pour une référence "encyclopédique"(même si le titre indique que c'est "concis") 
+            vous pouvez consulter  \cite{Wasserman2004}.
+            \item Des références supplémentaires pourront être indiquées au moment de traiter chaque thème.
+        \end{enumerate}
+        \framebreak
+        \item \textbf{\underline{Travail:}} \begin{enumerate}
+            \item Exercices(analytiques) pour s'approprier les méthodes et/ou traiter 
+            de points non vus dans le cours.
+            \item Applications/illustrations: elle seront données/corrigées sous forme de notebooks
+             Python, mais vous pouvez utiliser le langage de votre préférence(R, Matlab, \ldots)
+             \item Le travail sera donné environ toutes les deux semaines. 
+             Les corrections seront mises en ligne et ne se feront pas en séance(au moins dans la totalité)
+        \end{enumerate}
+        \framebreak
+        \item Site/dépôt du cours: 
+        \medskip
+        \url{https://github.com/MWUrda/Statistiques_UGA_M1Eco_S1/tree/main}
+    
+    \end{itemize}
+    \end{frame}
+
+\section{Introduction}
+\frame{\sectionpage}
+
+\begin{frame}[allowframebreaks]{Heuristique}
+\begin{itemize}
+    \item On considère \textbf{l'expérience statistique suivante:}.
+    \begin{enumerate}[-]
+        \item On lance une pièce de monnaie $n$ fois, et à chaque lancer est associé 
+    son résultat qui vaut soit "pile", soit "face".
+        \item On veut à partir de cette expérience mesurer la probabilité du résultat "pile", que nous notons $p$.
+        \item Pour cela, \textbf{on estime} $p$ par le pourcentage de résultats de valeur "pile" par rapport au nombre total de lancers.
+     \end{enumerate}
+    \item \textbf{\underline{Question:}} comment garantir la validité de cette procédure?
+
+\framebreak
+
+    \item Formellement, la procédure consiste en:
+    \begin{enumerate}[-]
+    \item Pour $i=1, 2, \ldots, n$, on définit $P_i = 1$ si le $i$-ème lancé donne "pile" et $P_i=0$ sinon.
+    \item L'estimateur de $p$ est la moyenne empirique:
+    \begin{align*}
+        \bar{P}_n &=\frac{1}{n}\sumin P_i.
+    \end{align*}
+    \end{enumerate}
+    \item \textbf{\underline{Question:}} quelle est la précision de cet estimateur?
+    \item Afin de répondre à ces question on propose un modèle statistique qui fournit une description/approximation de l'expérience, et qui sera considérée comme suffisamment bonne
+    (par rapport à certains critères) pour être utile.
+    \framebreak
+
+    \item Le modèle consiste en un ensemble  d'hypothèses sur les 
+     observations $P_i, i=1, 2, \ldots, n$.
+     \item  A partir de ces hypothèse on obtient des conclusions/résultats statistiques.
+
+    \item Les hypothèses sont les suivantes:
+
+\begin{enumerate}
+    \item $P_i$ est une variable aléatoire(v.a.).
+    \item La loi de $P_i$ est une loi de Bernouilli de paramètre $p$.
+    \item Les $P_1, P_2, \ldots, P_n$ sont mutuellement indépendantes.
+\end{enumerate}
+
+\framebreak
+
+     \item \textbf{\underline{Discussion:}}
+    \begin{enumerate}
+    \item Modéliser les observations comme de v.a. est une façon de modéliser 
+    le fait que le modélisateur n'a qu'une information imparfaite sur 
+    les conditions de l'expérience. Si cette information était parfaite on pourrait 
+    prédire les résultats de l'expérience sans erreur.
+    \item Comme $P_i\in\{0, 1\}$, la loi de $P_i$ est une loi de Bernouilli de paramètre $p$ 
+    dès lors que la pièce est équilibrée.
+    \medskip
+
+    \ldots Pour une discussion intéressante vous pouvez consulter 
+    \href{https://softmath.seas.harvard.edu/publication/probability-geometry-and-dynamics-in-the-toss-of-a-thick-coin/}
+    {ici}
+    \item Supposer l'indépendance est approprié lorsque 
+    les conditions demeurent identiques entre les lancers. Par exemple, 
+     il n'y a pas de processus d'apprentissage entre les lancers.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Deux résultats/outils importants}
+    \begin{itemize}
+        \item  Soit $X, X_1, X_2, \ldots, X_n$ des v.a. i.i.d., avec $\mu:=\Exp(X)$, 
+    $\sigma^2 := \Vr(X)$.
+    \begin{enumerate}
+        \item \textbf{\underline{Lois des grands nombres(LGN):}}
+        \begin{enumerate}[-]
+            \item \textbf{\underline{Loi forte:}}
+            \begin{align*}
+                \bar{X}_n := \frac{1}{n}\sumin X_n &\limps\mu.
+            \end{align*}
+            \item \textbf{\underline{Loi faible:}}
+            \begin{align*}
+                \bar{X}_n := \frac{1}{n}\sumin X_n &\limp \mu.
+            \end{align*}
+        \end{enumerate}
+        \framebreak
+        \item \textbf{\underline{Théorème central limite(TCL):}}
+        \begin{align*}
+            \sqrt{n}\frac{\bar{X}_n - \mu}{\sigma} &\limd \mathcal{N}(0, 1).
+        \end{align*}
+        ou de manière équivalente
+        \begin{align*}
+            \sqrt{n}(\bar{X}_n - \mu) &\limd \mathcal{N}(0, \sigma^2).
+        \end{align*}
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Conséquences}
+    \begin{itemize}
+        \item  Les LGN appliquées à $\bar{P}_n$ impliquent:
+    \begin{align*}
+        \bar{P}_n \limp p, &\quad \textrm{ou} \quad  \bar{P}_n \limps p.
+    \end{align*}
+    \item Ainsi lorsque $n\rightarrow \infty$, $\bar{P_n}$ est un "bon" 
+    estimateur(\emph{estimateur consistant}) de $p$.
+        \item Le TCL affine ce résultat en quantifiant la précision de l'estimateur.
+        \framebreak
+        \item Notons: 
+        \begin{enumerate}[-]
+            \item $\Phi(x)$: fonction de répartition d'une v.a. de loi $\mathcal{N}(0, 1)$.
+            \item $\Phi_n(x)$: fonction de répartition de $\sqrt{n}\frac{\bar{P}_n-p}{\sqrt{p(1-p)}}$.
+        \end{enumerate}
+        \item Par le TCL $\Phi_n(x)\approx \Phi(x)$ lorsque $n\rightarrow \infty$. Par conséquent, 
+        pour tout $x> 0$,
+        \begin{align*}
+            \Prob\left(\abs{\bar{P}_n- p}\geq x\right)
+            &\approx 2\left(1-\Phi\left(\frac{x\sqrt{n}}{\sqrt{p(1-p)}}\right)\right).
+        \end{align*}
+        \framebreak
+        \item \textbf{\underline{Conséquences:}}
+        \begin{enumerate}[-]
+            \item Une approximation sur le degré de concentration de $\bar{P}_n$ autour de $\mu$;
+            \item Pour $\alpha \in(0, 1)$, si $q_\alpha$ est le quantile d'ordre $(1-\alpha/2)$ 
+            de la loi $\mathcal{N}(0, 1)$, alors avec une probabilité $\approx 1-\alpha$(pour $n\rightarrow \infty$): 
+            \begin{align*}
+                \bar{P}_n&\in\left[p - \frac{q_\alpha\sqrt{p(1-p)}}{\sqrt{n}};
+                p + \frac{q_\alpha\sqrt{p(1-p)}}{\sqrt{n}}\right].
+            \end{align*}
+        \end{enumerate}
+        \framebreak
+        \item On remarque que quelque soit la valeur(inconnue) de $p$,\begin{align*}
+            p(1-p)&\leq 1/4.
+        \end{align*}
+        \item Ce faisant on a grossièrement avec une probabilité d'au moins $1-\alpha$:\begin{align*}
+            \bar{P}_n&\in\left[p - \frac{q_\alpha}{2\sqrt{n}};
+             p + \frac{q_\alpha}{2\sqrt{n}}\right].
+        \end{align*}
+        \item Autrement dit lorsque $n\rightarrow \infty$, l'intervalle $\left[\bar{P}_n - \frac{q_\alpha}{2\sqrt{n}};
+        \bar{P}_n + \frac{q_\alpha}{2\sqrt{n}}\right]$ contient $p$ avec une probabilité $\geq 1-\alpha$.
+        \item Cet intervalle est appelé \emph{intervalle de confiance asymptotique} pour $p$.
+        \item \textbf{\underline{Question:}} qu'en est-il pour $n$ pas "suffisamment" grand?
+\end{itemize}
+\end{frame}
+\begin{frame}[allowframebreaks]{Un autre résultat/outil: inégalité de Hoeffding}
+    \begin{itemize}
+        \item On considère le cas i.i.d.
+    \begin{enumerate}[-]
+        \item Soit $n$ un entier positif et $X, X_1, X_2, \ldots, X_n$ des v.a. i.i.d. telles que 
+        $X\in [a, b]$ p.s.($a<b$ sont deux nombres donnés). Soit $\mu :=\Exp(X)$. 
+        \item Alors pour tout $\epsilon>0$:\begin{align*}
+            \Prob\left(\abs{\bar{X}_n - \mu} \geq \epsilon\right)&\leq 2e^{-\frac{2n\epsilon^2}{(b-a)^2}}.
+        \end{align*}
+\end{enumerate}
+\item \textbf{\underline{Conséquence:}}\begin{enumerate}[-]
+    \item Pour $\alpha \in (0, 1)$, avec une probabilité $(1-\alpha)$:\begin{align*}
+        \bar{P}_n-\sqrt{\frac{\log(2/\alpha)}{2n}}&\leq p \leq \bar{P}_n+\sqrt{\frac{\log(2/\alpha)}{2n}}.
+    \end{align*}
+    \item Ce résultat est valable pour $n$ "pas très grand".
+\end{enumerate}
+\end{itemize}
+\end{frame}
+       \section{Retour sur les différents types de convergence}
+       \frame{\sectionpage}
+       \begin{frame}
+           [allowframebreaks]{Types de convergence}
+           \begin{itemize}
+               \item Soit $(T_n)_{n\geq 1}$ une suite de v.a. et $T$ une v.a.($T$ 
+               peut être déterministe).\begin{enumerate}[-]
+                   \item \textbf{\underline{Convergence presque sûre(p.s.):}}
+                   \begin{align*}
+                    T_n \limps T & \quad \textrm{ssi}\quad
+                    \Prob\left[\left\{\omega: T_n(\omega)\underset{n\rightarrow\infty}{\longrightarrow} T(\omega)\right\}\right] = 1.
+                   \end{align*}
+                   \item \textbf{\underline{Convergence en probabilité:}} 
+                   \begin{align*}
+                    T_n \limp T & \quad \textrm{ssi}\quad \Prob\left(\abs{T_n-T}\geq \epsilon\right)
+                    \underset{n\rightarrow\infty}{\longrightarrow} 0, \quad \forall \epsilon > 0.
+                   \end{align*}
+                   \framebreak
+                   \item \textbf{\underline{Convergence en $L^p$($p\geq 1$):}}
+                   \begin{align*}
+                       T_n\limlp T & \quad \textrm{ssi}\quad \Exp\left(\abs{T_n-T}^p\right)
+                       \underset{n\rightarrow\infty}{\longrightarrow} 0.
+                   \end{align*} 
+                   \item \textbf{\underline{Convergence en loi/distribution):}}
+                    \begin{align*}
+                    T_n\limd T & \quad \textrm{ssi}\quad \Prob(T_n\leq x) \underset{n\rightarrow\infty}{\longrightarrow} \Prob(T\leq x),
+                     \end{align*} 
+                   pour tout $x\in\R$ où la fonction de répartition/distribution de $T$ est
+                   continue.
+               \end{enumerate}
+               \item \textbf{\underline{Remarque:}} les définition précédentes peuvent s'étendre aux vecteurs de v.a.(i.e., v.a. dans $\R^d$, pour $d\geq 2$).
+           \end{itemize}
+       \end{frame}
+    \begin{frame}
+        [allowframebreaks]{Caractérisations de la convergence en distribution}
+        \begin{itemize}
+            \item Les propositions suivantes sont équivalentes:\begin{enumerate}[(i)]
+                \item $T_n\limd T$;
+                \medskip
+                \item $\Exp\left[f(T_n)\right] 
+                \underset{n\rightarrow \infty}{\longrightarrow}\Exp\left[f(T)\right]$, 
+                pour toutes les fonctions continues et bornées $f$;
+                \medskip
+                \item $\Exp\left(e^{ixT_n}\right)
+                \underset{n\rightarrow \infty}{\longrightarrow} \Exp\left(e^{ixT}\right)$, 
+                pour tout $x\in\R$.
+            \end{enumerate}
+        \end{itemize}
+    \end{frame}
+        \begin{frame}
+            [allowframebreaks]{Propriétés importantes}\begin{itemize}
+                \item Si $(T_n)_{n\geq 1}$ converge p.s., alors elle converge 
+                aussi en probabilité, et les deux limites sont égales p.s.
+                \item Si $(T_n)_{n\geq 1}$ converge en $L^p$ alors elle converge aussi en $L^q$ pour tout $q\leq p$ 
+                et en probabilité, et les deux limites sont égales p.s.
+                \item Si $f$ est une fonction continue: \begin{align*}
+                    T_n\overset{p.s./p/d}{\longrightarrow} T &\Rightarrow 
+                    f(T_n) \overset{p.s./p/d}{\longrightarrow} f(T).
+                \end{align*}
+            \end{itemize}
+        \end{frame}
+        \begin{frame}
+            [allowframebreaks]{Limites et opérations}\begin{itemize}
+                \item On peut additionner, multiplier, \ldots, les limites presque sûrement et en probabilité.
+                Si $U_n \overset{p.s./p}{\longrightarrow} U$, et $V_n \overset{p.s./p}{\longrightarrow} V$, alors: 
+                \begin{enumerate}[-]
+                    \item $U_n + V_n \overset{p.s./p}{\longrightarrow} U+V$,
+                    \item $U_nV_n \overset{p.s./p}{\longrightarrow} UV$,
+                    \item Si en plus, $V\neq 0$ p.s., alors $\frac{U_n}{V_n}\overset{p.s./p}{\longrightarrow}\frac{U}{V}$.
+                \end{enumerate}
+                \item \textbf{\underline{Remarque:}} ces règles ne s'appliquent pas à la convergence en distribution sauf lorsque la pair $(U_n, V_n)$ 
+                converge vers en distribution vers $(U, V)$.
+            \end{itemize}
+                 
+        \end{frame}
+        \begin{frame}
+            [allowframebreaks]{Un autre exemple}
+            \begin{itemize}
+                \item On observe les temps entre les arrivées de personnes dans une file d'attente(par exemple d'un centre d'appel):
+                $T_1, T_2, \ldots, T_n$.
+                \item On suppose que ces temps sont: 
+                \begin{enumerate}[-]
+                    \item Mutuellement indépendants.
+                    \item Représentés par des v.a de loi exponentielle de paramètre commun $\lambda>0$.
+                \end{enumerate} 
+                \item On veut estimer $\lambda$ à partir des observations.
+                \framebreak
+                \item \textbf{\underline{Discussion des hypothèses:}}    
+                \begin{enumerate}[-]
+                    \item Indépendance mutuelle: les personnes sont supposées ne pas être liées 
+                    entre elles de sorte qu'elles ne décident pas leur arrivée en fonction de celle des autres.
+                    \item $T_1, T_2, \ldots, T_n$ sont de v.a de loi exponentielle: absence de mémoire de la loi exponentielle;
+                    \begin{align*}
+                        \Prob(T_1 > t + s)&=\Prob(T_1>s), \quad \forall s, t \geq 0.
+                    \end{align*}
+                    \item Les lois exponentielles de $T_1, T_2, \ldots$ ont le même paramètre $\lambda$: 
+                    comportement homogène dans la population.
+                \end{enumerate}   
+                \framebreak
+                \item Densité de $T_1$: 
+                \begin{align*}
+                    f(t)&= \lambda e^{-\lambda t}, \quad \forall t \geq 0.
+                \end{align*}
+                \item $\Exp(T_1)=\frac{1}{\lambda}$.
+                \item Et un estimateur naturel de $\frac{1}{\lambda}$ est: 
+                \begin{align*}
+                    \bar{T}_n &:=\frac{1}{n}\sumin T_i.
+                \end{align*}   
+                \item Un estimateur naturel de $\lambda$ est: 
+                \begin{align*}
+                    \hat{\lambda} &:=\frac{1}{\bar{T}_n}.
+                \end{align*} 
+                \framebreak
+                \item Par les LGNs,
+                \begin{align*}
+                    \bar{T}_n &\overset{p.s./p}{\longrightarrow} \frac{1}{\lambda}.
+                \end{align*}   
+                \item Et donc: 
+                \begin{align*}
+                    \hat{\lambda}&\overset{p.s./p}{\longrightarrow} \lambda.
+                \end{align*}     
+                \item Par le TCL: 
+                \begin{align*}
+                    \sqrt{n}\left(\bar{T}_n - \frac{1}{\lambda}\right)&\limd \mathcal{N}(0, \lambda^{-2}).
+                \end{align*}                               
+                \item \textbf{\underline{Question:}} comment le résultat sur le TCL ci-dessus se traduit/transfère t-il 
+                sur $\hat{\lambda}$? Comment obtenir un intervalle de confiance asymptotique pour $\lambda$?
+            \end{itemize}
+        \end{frame}
+\begin{frame}
+    [allowframebreaks]{La méthode Delta}
+    \begin{itemize}
+        \item Soit $(Z_n)_{n\geq 1}$ une suite de v.a. qui vérifient: 
+        \begin{align*}
+            \sqrt{n}\left(Z_n - \vartheta \right)&\limd \mathcal{N}(0, \sigma^2),
+        \end{align*}
+        pour $\vartheta \in \R$ et $\sigma^2 >0$(la suite $(Z_n)_{n\geq 1}$ est dite \emph{asymptotiquement normale autour de $\vartheta$}).
+        \item Soit $g: \R \rightarrow \R$ continûment différentiable au point $\vartheta$. Alors: 
+        \begin{enumerate}[-]
+            \item $\left(g(Z_n)\right)_{n\geq 1}$ est aussi asymptotiquement normale.
+            \item Plus précisément: 
+            \begin{align*}
+                \sqrt{n}\left(g(Z_n)-g(\vartheta)\right)&\limd \mathcal{N}(0, g^\prime(\vartheta)^2\sigma^2).
+            \end{align*}
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Conséquences de la méthode Delta}
+    \begin{itemize}
+        \item $\sqrt{n}(\hat{\lambda}-\lambda) \limd \mathcal{N}(0,\lambda^2)$.
+        \item Par conséquent, pour $\alpha\in(0,1)$ et $n$ suffisamment grand: 
+        \begin{align*}
+            \abs{\hat{\lambda}-\lambda} &\leq \frac{q_\alpha\lambda}{\sqrt{n}}.
+        \end{align*}
+        \item \textbf{\underline{Question:}} est-ce que 
+        $\left[\hat{\lambda} - \frac{q_\alpha\lambda}{\sqrt{n}}; \hat{\lambda} 
+        + \frac{q_\alpha\lambda}{\sqrt{n}}\right]$ peut être utilisé comme intervalle de confiance asymptotique pour $\lambda$?
+        \item La réponse est non car il dépend de $\lambda$.
+        \framebreak
+        \item Deux solutions sont possibles.
+        \begin{enumerate}
+        \item \textbf{\underline{Solution sous dépendance:}}
+        \begin{enumerate}[-]
+        \item Nous avons:
+            \begin{align*}
+                \abs{\hat{\lambda}-\lambda} \leq \frac{q_\alpha\lambda}{\sqrt{n}}&\Leftrightarrow 
+                \lambda\left(1- \frac{q_\alpha}{\sqrt{n}}\right)\leq \hat{\lambda}
+                \leq \lambda\left(1+ \frac{q_\alpha}{\sqrt{n}}\right)\\
+                &\Leftrightarrow \hat{\lambda}\left(1 + \frac{q_\alpha}{\sqrt{n}}\right)^{-1}
+                \leq \lambda \leq \hat{\lambda}\left(1 - \frac{q_\alpha}{\sqrt{n}}\right)^{-1}
+            \end{align*}
+        \item Et l'intervalle de confiance asymptotique pour lambda est: 
+        \[
+            \left[\hat{\lambda}\left(1 + \frac{q_\alpha}{\sqrt{n}}\right)^{-1}; \hat{\lambda}\left(1 - \frac{q_\alpha}{\sqrt{n}}\right)^{-1}\right]
+        \]
+        \end{enumerate}
+        \item Solution systématique par le \textbf{théorème de Slutsky}.
+    \end{enumerate}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Théorème de Slutsky}
+    \begin{itemize}
+        \item Soit $(X_n)_{n\geq 1}, (Y_n)_{n\geq 1}$ deux suites de v.a. telles que: 
+        \begin{enumerate}[(i)]
+            \item $X_n \limd X$;
+            \item $Y_n \limp c$, 
+        \end{enumerate}
+        où $X$ est une v.a. et $c$ un nombre réel donné. 
+        \item Alors: \begin{align*}
+            (X_n, Y_n) &\limd (X, c).
+        \end{align*}
+        \item En particulier: \begin{align*}
+            X_n + Y_n &\limd X + c,\\
+            X_nY_n&\limd cX,\\
+            \cdots
+        \end{align*}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Conséquences du théorème de Slutsky}
+    \begin{itemize}
+        \item Par la méthode Delta, on sait que: \begin{align*}
+            \sqrt{n}\frac{\hat{\lambda} - \lambda}{\lambda} &\limd \mathcal{N}(0,1).
+        \end{align*}
+        \item Par la loi faible des grands nombres:\begin{align*}
+            \hat{\lambda} &\limp \lambda.
+        \end{align*}
+        \item Et donc par le théorème de Slutsky: \begin{align*}
+            \sqrt{n}\frac{\hat{\lambda}-\lambda}{\hat{\lambda}}&\limd \mathcal{N}(0,1).
+        \end{align*}
+        \item Un autre intervalle de confiance asymptotique pour $\lambda$ est: \begin{align*}
+            \left[\hat{\lambda}- \frac{q_\alpha\hat{\lambda}}{\sqrt{n}}; 
+            \hat{\lambda}+ \frac{q_\alpha\hat{\lambda}}{\sqrt{n}}\right].
+        \end{align*}
+
+        \framebreak
+        
+        \textbf{\underline{Remarque:}}\begin{enumerate}[-]
+            \item Dans le premier example(lancers de pièce avec résultat pile/face), nous avons 
+            utilisé une solution sous dépendance: "$p(1-p)\leq 1/4$".
+            \item Avec le théorème de Slutsky nous obtenons l'intervalle de confiance asymptotique:\begin{align*}
+                \left[\hat{P}_n - \frac{q_\alpha\sqrt{\hat{P}_n(1-\hat{P}_n)}}{\sqrt{n}}; 
+                \hat{P}_n + \frac{q_\alpha\sqrt{\hat{P}_n(1-\hat{P}_n)}}{\sqrt{n}}
+                \right].
+            \end{align*}
+        \end{enumerate}
+
+    \end{itemize}
+    
+\end{frame}
+\begin{frame}[allowframebreaks]{Références}
+\bibliographystyle{jpe}
+\bibliography{../Biblio}
+
+\end{frame}
+\end{document}

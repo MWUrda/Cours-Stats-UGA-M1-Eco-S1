@@ -1,0 +1,404 @@
+%\documentclass[ignorenonframetext, compress, 9pt, xcolor=svgnames]{beamer} 
+\input{../Config_diapos}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\usepackage{enumerate}   
+\usepackage{multirow}
+\usepackage{txfonts}
+\usepackage{mathrsfs}
+\usepackage{pgfplots}
+\pgfplotsset{compat = newest}
+\usetikzlibrary{positioning, arrows.meta}
+\usepgfplotslibrary{fillbetween}
+\newcommand{\A}{(0,0) ++(135:2) circle (2)}
+\newcommand{\B}{(0,0) ++(45:2) circle (2)}
+\DeclareMathOperator{\C}{C}
+\DeclareMathOperator{\util}{u}
+%\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\setbeamersize{text margin left=1.2cm,text margin right=1.2cm} 
+\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\usepackage{xr}
+%\externaldocument{Econometrie1_UGA_P2e}
+  \usepackage{eso-pic}
+%\newcommand\AtPagemyUpperLeft[1]{\AtPageLowerLeft{%
+%\put(\LenToUnit{0.9\paperwidth},\LenToUnit{0.85\paperheight}){#1}}}
+%\AddToShipoutPictureFG{
+ % \AtPagemyUpperLeft{{\includegraphics[width=1.1cm,keepaspectratio]{logoUGA2020.pdf}}}
+%}%
+
+%\setbeamercolor{title}{fg=black}
+%\setbeamercolor{frametitle}{fg=black}
+%\setbeamercolor{section in head/foot}{fg=black}
+%\setbeamercolor{author in head/foot}{bg=Brown}
+%\setbeamercolor{date in head/foot}{fg=Brown}
+\AtBeginSection[]
+  {
+    \ifnum \value{framenumber}>1
+      \begin{frame}<beamer>
+      \frametitle{Plan}
+      \tableofcontents[currentsection]
+      \end{frame}
+    \else
+    \fi
+  }
+\setbeamertemplate{section page}
+{
+    \begin{centering}
+    \begin{beamercolorbox}[sep=11pt,center]{part title}
+    \usebeamerfont{section title}\thesection.~\insertsection\par
+    \end{beamercolorbox}
+    \end{centering}
+}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}}
+\title[]{ \textbf{Introduction au méthodes statistiques}}
+\subtitle{Cours 3: Maximum de Vraisemblance}
+\date{\today}
+\author{Michal W. Urdanivia\inst{*}}
+\institute{\inst{*}UGA, Facult\'e d'\'Economie, GAEL, \\e-mail: \href{mailto:michal.wong-urdanivia@univ-grenoble-alpes.fr}{michal.wong-urdanivia@univ-grenoble-alpes.fr}}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}
+%}
+
+\begin{document}
+%%% TIKZ STUFF
+\usetikzlibrary{positioning}
+\usetikzlibrary{snakes}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{matrix,shapes,arrows,fit,tikzmark}
+\usetikzlibrary{shapes}
+\tikzset{   
+        every picture/.style={remember picture,baseline},
+        every node/.style={anchor=base,align=center,outer sep=1.5pt},
+        every path/.style={thick},
+        }
+\newcommand\marktopleft[1]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-a) at (-.3em,.3em) {};%
+}
+\newcommand\markbottomright[2]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-b) at (0em,0em) {};%
+}
+\tikzstyle{every picture}+=[remember picture] 
+\tikzstyle{mybox} =[draw=black, very thick, rectangle, inner sep=10pt, inner ysep=20pt]
+\tikzstyle{fancytitle} =[draw=black,fill=red, text=white]
+\tikzstyle{observed}=[draw,circle,fill=gray!50]
+
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}{Plan}
+ \tableofcontents
+    \end{frame}
+
+%\begin{frame}
+%\frametitle{Contenu}
+%\tableofcontents[pausesections, pausesubsections]
+%\end{frame}
+
+%\section{Qu'est-ce que l’économétrie ? A quoi (à qui) ça sert ?}
+%\frame{\sectionpage}
+%\begin{frame}
+%  \tableofcontents  
+%\end{frame}
+
+\section{Vraisemblance}
+\frame{\sectionpage}
+
+\begin{frame}[allowframebreaks]{Vraisemblance, cas discret}
+    \begin{itemize}
+        \item Soit un modèle statistique $\left(\mathcal{E}, \mathcal{F}, (\Prob_\theta)_{\theta\in\Theta}\right)$ 
+        associé à un échantillon de v.a. i.i.d,  $X_1, X_2, \ldots, X_n$.  
+        Supposons que $\mathcal{E}$ est discret(i.e., fini, ou dénombrable).
+        \item \textbf{\underline{Définition}}: la \textbf{vraisemblance} du modèle 
+        est l'application $\mathcal{L}_n$(ou seulement $\mathcal{L}$) définie par: 
+        \begin{align*}
+            \mathcal{L}_n : \mathcal{E}^n\times\Theta &\rightarrow \R\\
+            (x_1, x_2, \ldots, x_n, \theta) &\mapsto \Prob_\theta(X_1=x_1, X_2 =x_2, \ldots, X_n = x_n).
+        \end{align*}
+        \framebreak
+        \item \textbf{\underline{Exemples}}:
+        \begin{enumerate}
+            \item Tirages de Bernoulli: si $X_1, X_2, \ldots, X_n \overset{i.i.d.}{\sim}Ber(p)$ pour un
+             $p\in(0, 1)$:
+             \begin{enumerate}[-]
+                 \item $\mathcal{E}= \{0, 1\}$,
+                 \item $\Theta = (0, 1)$,
+                 \item $\forall(x_1, \ldots, x_n)\in \{0, 1\}^n$, $\forall p\in(0,1)$: \begin{align*}
+                     \mathcal{L}(x_1, \ldots, x_n, p) &= \prodi \Prob_p(X_i=x_i)\\
+                     &=\prodi p^{x_i}(1-p)^{(1-x_i)}\\
+                     &= p^{\sumi x_i}(1-p)^{(n-\sumi x_i)}.
+                 \end{align*}
+             \end{enumerate}
+             \framebreak
+             \item Modèle de Poisson: si $X_1, X_2, \ldots, X_n \overset{i.i.d.}{\sim}\mathcal{P}oiss(\lambda)$,
+             pour un $\lambda > 0$: 
+             \begin{enumerate}[-]
+                 \item $\mathcal{E}= \N$,
+                 \item $\Theta = (0, \infty)$,
+                 \item $\forall (x_1, x_2, \ldots, x_n)\in \N^{n}, \forall \lambda >0$: 
+                 \begin{align*}
+                     \mathcal{L}(x_1, x_2, \ldots, x_n, \lambda) &= \prodi \Prob_\lambda(X_i=x_i)\\
+                     &=\prodi e^{-\lambda}\frac{\lambda^{x_i}}{x_i!}\\
+                     &= e^{-n\lambda}\frac{\lambda^{\sumi x_i}}{x_1!x_2!\ldots x_n!}.
+                 \end{align*}
+             \end{enumerate}
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Vraisemblance, cas continu}
+    \begin{itemize}
+        \item Soit un modèle statistique $\left(\mathcal{E}, \mathcal{F}, (\Prob)_{\theta\in\Theta}\right)$ 
+        associé à un échantillon de v.a. i.i.d,  $X_1, X_2, \ldots, X_n$.  Supposons que tous les $\Prob_\theta$ 
+        ont une densité $f_\theta$ par rapport à la mesure de Lebesgue.
+        \item \textbf{\underline{Définition}}: la vraisemblance du modèle est l'application $\mathcal{L}$ 
+        définie par: 
+        \begin{align*}
+            \mathcal{L}: \mathcal{E}^n\times\Theta &\rightarrow \R\\
+            (x_1, x_2, \ldots, x_n, \theta) &\mapsto \prodi f_\theta(x_i).
+        \end{align*}
+        \framebreak
+        \item \textbf{\underline{Exemples}}: 
+        \begin{enumerate}
+            \item \textbf{Modèle Gaussien}: Si $X_1, X_2, \ldots, X_n \overset{i.i.d.}{\sim}
+            \mathcal{N}\left(\mu, \sigma^2\right)$, pour un $\mu \in \R$, et $\sigma^2>0$: 
+            \begin{enumerate}[-]
+                \item $\mathcal{E}= \R$,
+                \item $\Theta = \R\times \R_{+}^*$,
+                \item $\forall(x_1, x_2, \ldots, x_n)\in \R^n, \forall (\mu, \sigma^2)\in \R\times \R_+^*$:
+                \begin{align*}
+                    \mathcal{L}(x_1, x_2, \ldots, x_n, \mu, \sigma^2)&= \frac{1}{(\sqrt{2\pi\sigma^2})^n}
+                    \exp\left(-\frac{1}{2\sigma^2}\sumi(x_i-\mu)^2\right).
+                \end{align*}
+            \end{enumerate}
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\section{Maximum de vraisemblance}
+\frame{\sectionpage}
+
+\begin{frame}[allowframebreaks]{Estimateur du maximum de vraisemblance}
+    \begin{itemize}
+        \item Soit $X_1, X_2, \ldots, X_n$ un échantillon i.i.d. associé au modèle statistique 
+        $\left(\mathcal{E}, \mathcal{F}, (\Prob_\theta)_{\theta\in\Theta}\right)$ et soit $\mathcal{L}$
+        la vraisemblance du modèle.
+        \item \textbf{\underline{Définition}}: l'estimateur du maximum de vraisemblance est défini par, 
+        \begin{align*}
+            \hat{\theta}^{MV}_n &=\underset{\theta\in \Theta}{\arg\max} \ \mathcal{L}(X_1, X_2, 
+            \ldots, X_n, \theta),
+        \end{align*}
+        dès lors qu'il existe.
+        \item \textbf{Remarque(log-vraisemblance)}: en pratique, on utilise le fait que,
+        \begin{align*}
+            \hat{\theta}^{MV}_n &=\underset{\theta\in \Theta}{\arg\max} \ \log \mathcal{L}(X_1, X_2, 
+            \ldots, X_n, \theta).
+        \end{align*}
+        \framebreak
+        \item \textbf{\underline{Exemples}}
+        \begin{enumerate}[-]
+            \item Tirages de Bernoulli: $\hat{p}_n^{MV} = \bar{X}_n$.
+            \item Modèle de Poisson: $\hat{\lambda}_n^{MV} = \bar{X}_n$.
+            \item Modèle Gaussien: $(\hat{\mu}_n, \hat{\sigma}_n^2) = (\bar{X}_n, \hat{S}_n)$.
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Information de Fisher(Définition)}
+    \begin{itemize}
+        \item Définissons la log-vraisemblance d'une observation par: \begin{align*}
+            \ell(\theta)&= \log \mathcal{L}(X, \theta), \quad \theta \in \Theta.
+        \end{align*}
+        \item Supposons que $\ell$ est p.s. doublement différentiable. 
+        \item Sous certaines conditions de régularité, l'\textbf{information de Fisher} 
+        du modèle statistique est définie par: \begin{align*}
+            \mathcal{I}(\theta)&=\Vr_\theta\left(\nabla_\theta\ell(\theta)\right)
+            =-\Exp_\theta\left(\frac{\partial^2\ell}{\partial\theta\partial\theta'}(\theta)\right).
+        \end{align*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    [allowframebreaks]{Estimateur du MV: théorème}
+    \begin{itemize}
+        \item Soit $\theta^* \in \Theta$(le \textbf{vrai paramètre}). Supposons les conditions suivantes vérifiées: 
+        \begin{enumerate}
+            \item Le modèle est identifié.
+            \item Pour tout $\theta \in \Theta$, le support de $\Prob_\theta$ ne dépend pas de $\theta$.
+            \item $\theta^*$ n'est pas sur la limite de $\Theta$.
+            \item $\mathcal{I}(\theta)$ est inversible dans un voisinage de $\theta^*$.
+            \item Quelques conditions techniques additionnelles.
+        \end{enumerate}
+        \item  Alors, $\hat{\theta}_n^{MV}$ vérifie: \begin{enumerate}[-]
+            \item $\hat{\theta}_n^{MV} \limp \theta^*$, par rapport à $\Prob_{\theta^*}$;
+            \item $\sqrt{n}\left(\hat{\theta}_n^{MV} - \theta^*\right) 
+            \limd \mathcal{N}\left(0, \mathcal{I}(\theta^*)^{-1}\right)$, par rapport à $\Prob_{\theta^*}$.
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\section{Interprétation du principe du MV}
+\frame{\sectionpage}
+\begin{frame}
+    [allowframebreaks]{Distance en variation totale}
+    \begin{itemize}
+        \item On considère le modèle statistique 
+        $\left(\mathcal{E}, \mathcal{F}, (\Prob_\theta)_{\theta\in\Theta}\right)$ associé à l'échantillon de v.a. i.i.d 
+        $X_1, X_2, \ldots, X_n$. 
+        \item Le vrai paramètre du modèle est $\theta^*\in \Theta$, i.e., $X \sim \Prob_{\theta^*}$.
+        \item \textbf{\underline{Objectif du statisticien:}} étant donné $X_1, X_2, \ldots, X_n$ trouver/construire
+        un estimateur $\hat{\theta} := \hat{\theta}(X_1, X_2, \ldots, X_n)$ tel que $\Prob_{\hat{\theta}}$ soit proche de 
+        $\Prob_{\theta^*}$ pour la vraie valeur du paramètre $\theta^*$.
+        \item Ceci signifie que l'on souhaite que $\abs{\Prob_{\hat{\theta}}(A) - \Prob_{\theta^*}(A)}$ soit petit pour
+        tout $A\subset \mathcal{F}$
+        \framebreak
+        \item \textbf{\underline{Définition:}} la \textbf{distance en variation totale(DVT)} entre 
+        deux mesures de probabilité $\Prob_{\theta}$ et $\Prob_{\theta^\prime}$ est définie par,
+        \begin{align*}
+            \operatorname{d}_{vt}(\Prob_{\theta}, \Prob_{\theta^\prime}) &= 
+            \max_{A\in \mathcal{F}}\abs{\Prob_{\theta}(A)- \Prob_{\theta^\prime}(A)}.
+        \end{align*}
+        \framebreak
+        \item Supposons que $\mathcal{E}$ soit discret(i.e., fini ou dénombrable). Ceci inclut les v.a.,
+         suivant des lois de Bernoulli, binomiales, de Poisson,\ldots
+         \item Dans ce cas, $X$ a une \textbf{fonction de masse}: 
+         \begin{align*}
+             \Prob_\theta(X=x) &=: \prob_\theta(x) \quad \textrm{pour tout} \quad x \in \mathcal{E},
+              \quad \prob_\theta(x) > 0, \quad \sum_{x \in \mathcal{E}} \prob_\theta(x) = 1.
+         \end{align*}
+         \item Alors la DVT entre $\Prob_\theta$ et $\Prob_{\theta^\prime}$ est simplement une fonction 
+         des fonctions de masse $\prob_\theta$ et $\prob_{\theta^\prime}$: 
+         \begin{align*}
+            \operatorname{d}_{vt}(\Prob_{\theta}, \Prob_{\theta^\prime}) &= 
+            \frac{1}{2}\sum_{x\in\mathcal{E}}\abs{\prob_{\theta}(x) - \prob_{\theta^\prime}(x)}.
+         \end{align*}
+         \framebreak
+         \item  Supposons que $\mathcal{E}$ est continu, par exemple pour de v.a. gaussiennes ou exponentielles, \ldots
+         \item Supposons aussi que la densité de $X$ pour tout $A\in \mathcal{F}$ est donnée par,
+         \begin{align*}
+             \Prob_\theta(X\in A) &= \int_A f_\theta(x)\mathrm{d}x, 
+              \quad f_\theta(x) \geq 0, \quad \int_\mathcal{F}f_\theta(x)\mathrm{d}x = 1.
+         \end{align*}
+         \item La DVT entre $\Prob_\theta$ et $\Prob_{\theta^\prime}$ est simplement fonction 
+         des densités $f_\theta$ et $f_{\theta^\prime}$: 
+         \begin{align*}
+            \operatorname{d}_{vt}(\Prob_{\theta}, \Prob_{\theta^\prime}) &= 
+            \frac{1}{2}\int_{x\in\mathcal{E}}\abs{f_{\theta}(x) - f_{\theta^\prime}(x)}.
+         \end{align*}
+        \end{itemize}
+    \end{frame}
+    \begin{frame}[allowframebreaks]{Propriétés de la DVT}
+        \begin{enumerate}[i)]
+            \item  $\operatorname{d}_{vt}(\Prob_\theta, \Prob_{\theta^\prime}) 
+             = \operatorname{d}_{vt}( \Prob_{\theta^\prime}, \Prob_\theta)$(symétrie).
+            \item $\operatorname{d}_{vt}(\Prob_\theta, \Prob_{\theta^\prime})\geq 0$.
+            \item $\operatorname{d}_{vt}(\Prob_\theta, \Prob_{\theta^\prime}) = 0$ ssi $\Prob_\theta = \Prob_{\theta^\prime}$
+            \item $\operatorname{d}_{vt}(\Prob_\theta, \Prob_{\theta^\prime}) \leq \operatorname{d}_{vt}(\Prob_\theta, \Prob_{\theta^{\prime\prime}})
+             + \operatorname{d}_{vt}( \Prob_{\theta^{\prime\prime}}, \Prob_{\theta^\prime})$(inégalité triangulaire).
+        \end{enumerate}
+        \begin{itemize}
+            \item La DTV est ainsi une \href{https://fr.wikipedia.org/wiki/Distance_(math\%C3\%A9matiques)}{distance} entre lois de probabilité.
+        \end{itemize}
+\end{frame}
+
+\begin{frame}
+    [allowframebreaks]{Stratégie d'estimation}
+    \begin{itemize}
+        \item Construire un estimateur $\hat{\operatorname{d}}_{vt}(\Prob_\theta, \Prob_{\theta^*})$ pour tout $\theta\in \Theta$.
+        \item Obtenir alors $\hat{\theta}$ qui minimise la fonction $\theta\mapsto \hat{\operatorname{d}}_{vt}(\Prob_\theta, \Prob_{\theta^*})$.
+        \item \textbf{Problème}: construire $\hat{\operatorname{d}}_{vt}(\Prob_\theta, \Prob_{\theta^*})$ n'est pas évident!
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Divergence de Kullback-Leibler}
+    \begin{itemize}
+        \item Nous pouvons  essayer de remplacer la DVT par une autre distance entre mesures de probabilité.
+        \item Une, communément retenue car pratique est la \textbf{divergence de Kullback-Leibler}
+        \item \textbf{\underline{Définition:}} la divergence de Kullback-Leibler(KL) entre deux mesures 
+        de probabilité $\Prob_\theta$ et $\Prob_{\theta^\prime}$ 
+        est définie par,
+        \begin{align*}
+            \operatorname{KL}(\Prob_\theta, \Prob_{\theta^\prime})&=\left\{
+                \begin{array}{ll}
+                    \underset{x\in \mathcal{E}}{\sum} \prob_\theta(x)\log\left(\frac{\prob_\theta(x)}{\prob_{\theta^\prime}(x)}\right)
+                    & \textrm{lorsque} \ \mathcal{E} \ \textrm{est discret}\\
+                    &\\
+                    \int_{\mathcal{E}} f_\theta(x)\log\left(\frac{f_\theta(x)}{f_{\theta^\prime}(x)}\right)\mathrm{d}x
+                    & \textrm{lorsque} \ \mathcal{E} \ \textrm{est continu}.
+                \end{array}
+            \right.
+        \end{align*}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Propriétés de la divergence de KL}
+    \begin{enumerate}[i)]
+        \item $\operatorname{KL}(\Prob_\theta, \Prob_{\theta^\prime}) 
+        \neq \operatorname{KL}( \Prob_{\theta^\prime}, \Prob_\theta)$, en général.
+        \item $\operatorname{KL}(\Prob_\theta, \Prob_{\theta^\prime}) \geq 0 $.
+        \item $\operatorname{KL}(\Prob_\theta, \Prob_{\theta^\prime}) = 0$ ssi $\Prob_\theta = \Prob_{\theta^\prime}$.
+        \item $\operatorname{KL}(\Prob_\theta, \Prob_{\theta^\prime}) \nleq 
+        \operatorname{KL}(\Prob_\theta, \Prob_{\theta^{\prime\prime}}) +
+        \operatorname{KL}( \Prob_{\theta^{\prime\prime}}, \Prob_{\theta^\prime})$ en général.
+    \end{enumerate}
+\begin{itemize}
+    \item Ce n'est donc pas une distance, d'où le nom de divergence.
+    \item Et l'asymétrie sera la clé pour pouvoir l'estimer!
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+    [allowframebreaks]{MV et KL}
+    \begin{itemize}
+        \item On considère le cas où $\mathcal{E}$ est discret.
+        \item La divergence entre $\Prob_{\theta^*}$ et $\Prob_\theta$ est,
+        \begin{align*}
+            \operatorname{KL}( \Prob_{\theta^*}, \Prob_\theta)&=
+            \Exp_{\theta^*}\left[\log\left(\frac{\prob_{\theta^*}(X)}{\prob_\theta(X)}\right)\right]\\
+            &=\Exp_{\theta^*}\left[\log\prob_{\theta^*}(X)\right] - \Exp_{\theta^*}\left[\log\prob_{\theta}(X)\right]
+        \end{align*}
+        \framebreak
+        \item Ainsi, la fonction $\theta\mapsto \operatorname{KL}( \Prob_{\theta^*}, \Prob_\theta)$ est de la forme: 
+        \[\textrm{constante} \ - \Exp_{\theta^*}\left[\log\prob_{\theta}(X)\right]\].
+        \item Un estimateur consistant de $\Exp_{\theta^*}\left[\log\prob_{\theta}(X)\right]$ est 
+        $\frac{1}{n}\sumin\log\prob_\theta(X_i)$(LGN).
+        \framebreak
+        \item Et un estimateur de la divergence sera,
+        \begin{align*}
+            \hat{\operatorname{KL}}(\Prob_{\theta^*}, \Prob_\theta)&= \textrm{constante} \ - \frac{1}{n}\sumin\log\prob_\theta(X_i).
+        \end{align*}
+        \framebreak
+        \item Si nous revenons au problème de la minimisation de la distance entre les measures $\Prob_{\theta^*}$ et $\Prob_\theta$
+     pour définir l'estimateur $\hat{\theta}$, alors d'après ce qui précède il s'agit de résoudre,
+    \begin{align*}
+        \min_{\theta\in\Theta}\hat{\operatorname{KL}}(\Prob_{\theta^*}, \Prob_\theta) 
+        &= \min_{\theta\in\Theta}\left[\textrm{constante} \ - \frac{1}{n}\sumin\log\prob_\theta(X_i)\right]
+    \end{align*}
+    \framebreak
+    \item Et nous avons,
+    \begin{align*}
+        \min_{\theta\in\Theta}\left[\textrm{constante} \ - \frac{1}{n}\sumin\log\prob_\theta(X_i)\right]
+        &\Leftrightarrow \min_{\theta\in\Theta}\left[- \frac{1}{n}\sumin\log\prob_\theta(X_i)\right]\\
+        &\Leftrightarrow \max_{\theta\in\Theta}\left[\frac{1}{n}\sumin\log\prob_\theta(X_i)\right]\\
+        &\Leftrightarrow \max_{\theta\in\Theta}\left[\sumin\log\prob_\theta(X_i)\right]\\
+        &\Leftrightarrow \max_{\theta\in\Theta}\left[\log\left(\prodi\prob_\theta(X_i)\right)\right]\\
+        &\Leftrightarrow \max_{\theta\in\Theta}\left[\prodi\prob_\theta(X_i)\right]
+    \end{align*}
+    
+    \item \textbf{Qui est donc le principe du MV!!}
+    \end{itemize}
+\end{frame}
+%\begin{frame}[allowframebreaks]{References}
+%\bibliographystyle{jpe}
+%\bibliography{../Biblio}
+%\end{frame}
+
+\end{document}

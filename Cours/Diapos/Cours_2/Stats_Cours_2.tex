@@ -1,0 +1,268 @@
+%\documentclass[ignorenonframetext, compress, 9pt, xcolor=svgnames]{beamer} 
+\input{../Config_diapos}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\usepackage{enumerate}   
+\usepackage{multirow}
+\usepackage{txfonts}
+\usepackage{mathrsfs}
+\usepackage{pgfplots}
+\pgfplotsset{compat = newest}
+\usetikzlibrary{positioning, arrows.meta}
+\usepgfplotslibrary{fillbetween}
+\newcommand{\A}{(0,0) ++(135:2) circle (2)}
+\newcommand{\B}{(0,0) ++(45:2) circle (2)}
+\DeclareMathOperator{\C}{C}
+\DeclareMathOperator{\util}{u}
+%\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\setbeamersize{text margin left=1.2cm,text margin right=1.2cm} 
+\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\usepackage{xr}
+%\externaldocument{Econometrie1_UGA_P2e}
+  \usepackage{eso-pic}
+%\newcommand\AtPagemyUpperLeft[1]{\AtPageLowerLeft{%
+%\put(\LenToUnit{0.9\paperwidth},\LenToUnit{0.85\paperheight}){#1}}}
+%\AddToShipoutPictureFG{
+ % \AtPagemyUpperLeft{{\includegraphics[width=1.1cm,keepaspectratio]{logoUGA2020.pdf}}}
+%}%
+
+%\setbeamercolor{title}{fg=black}
+%\setbeamercolor{frametitle}{fg=black}
+%\setbeamercolor{section in head/foot}{fg=black}
+%\setbeamercolor{author in head/foot}{bg=Brown}
+%\setbeamercolor{date in head/foot}{fg=Brown}
+\AtBeginSection[]
+  {
+    \ifnum \value{framenumber}>1
+      \begin{frame}<beamer>
+      \frametitle{Plan}
+      \tableofcontents[currentsection]
+      \end{frame}
+    \else
+    \fi
+  }
+\setbeamertemplate{section page}
+{
+    \begin{centering}
+    \begin{beamercolorbox}[sep=11pt,center]{part title}
+    \usebeamerfont{section title}\thesection.~\insertsection\par
+    \end{beamercolorbox}
+    \end{centering}
+}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}}
+\title[]{ \textbf{Introduction au méthodes statistiques}}
+\subtitle{Cours 2: Inférence paramétrique}
+\date{\today}
+\author{Michal W. Urdanivia\inst{*}}
+\institute{\inst{*}UGA, Facult\'e d'\'Economie, GAEL, \\e-mail: \href{mailto:michal.wong-urdanivia@univ-grenoble-alpes.fr}{michal.wong-urdanivia@univ-grenoble-alpes.fr}}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}
+%}
+
+\begin{document}
+%%% TIKZ STUFF
+\usetikzlibrary{positioning}
+\usetikzlibrary{snakes}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{matrix,shapes,arrows,fit,tikzmark}
+\usetikzlibrary{shapes}
+\tikzset{   
+        every picture/.style={remember picture,baseline},
+        every node/.style={anchor=base,align=center,outer sep=1.5pt},
+        every path/.style={thick},
+        }
+\newcommand\marktopleft[1]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-a) at (-.3em,.3em) {};%
+}
+\newcommand\markbottomright[2]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-b) at (0em,0em) {};%
+}
+\tikzstyle{every picture}+=[remember picture] 
+\tikzstyle{mybox} =[draw=black, very thick, rectangle, inner sep=10pt, inner ysep=20pt]
+\tikzstyle{fancytitle} =[draw=black,fill=red, text=white]
+\tikzstyle{observed}=[draw,circle,fill=gray!50]
+
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}
+ \tableofcontents
+    \end{frame}
+
+%\begin{frame}
+%\frametitle{Contenu}
+%\tableofcontents[pausesections, pausesubsections]
+%\end{frame}
+
+%\section{Qu'est-ce que l’économétrie ? A quoi (à qui) ça sert ?}
+%\frame{\sectionpage}
+%\begin{frame}
+%  \tableofcontents  
+%\end{frame}
+
+\section{Modèle statistique}
+\frame{\sectionpage}
+
+\begin{frame}[allowframebreaks]{\sectionpage}
+\begin{itemize}
+    \item On considère le résultat observé d'une expérience statistique  
+     qui est un échantillon $X_1, X_2,\ldots, X_n$ de $n$ v.a. i.i.d. sur un espace mesurable 
+     $(\mathcal{E}, \mathcal{F})$, avec typiquement $\mathcal{E}\subseteq \R$, 
+     et de distribution commune notée $\Prob$.
+    \item \textbf{\underline{Définition formelle:}} un \textbf{modèle statistique} associé à cette expérience statistique est un triplet: 
+    \[\left(\mathcal{E}, \mathcal{F}, (\Prob_\theta)_{\theta\in\Theta})\right),
+        \] où: \begin{enumerate}[-]
+            \item $\left(\mathcal{E}, \mathcal{F}\right)$ est l'espace mesurable des observations;
+            \item $(\Prob_\theta)_{\theta\in\Theta}$ est une famille de mesures de probabilité
+            sur $\left(\mathcal{E}, \mathcal{F}\right)$;
+            \item $\Theta$ est appelé l'\textbf{ensemble des paramètres}.
+        \end{enumerate}
+\framebreak
+\item Généralement il sera supposé que le modèle est \textbf{correctement spécifié}, i.e., 
+défini tel que $\Prob = \Prob_\theta$, pour un $\theta \in \Theta$.
+\item Ce paramètre en particulier est appelé \textbf{vrai paramètre}, et il est inconnu: 
+le but de l'expérience statistique est de l'estimer.
+\item On supposera aussi que $\Theta \subseteq \R^d$ pour $d\geq 1$. On parle alors de \textbf{modèle
+paramétrique}.
+\framebreak
+\item \textbf{\underline{Exemples:}}\begin{enumerate}
+    \item Pour $n$ tirages de Bernoulli: \[
+        \left(\{0, 1\}, \mathcal{P}(\{0, 1\}), \left(Ber(p)\right)_{p\in(0,1)}\right)\].
+    \item Si $X_1, \ldots, X_n\overset{i.i.d.}{\sim}\mathcal{E}xp(\lambda)$, pour un $\lambda>0$ 
+    inconnu: \[
+        \left(\R_{+}^{*}, \mathcal{B}(\R_{+}^{*}), 
+        \left(\mathcal{E}xp(\lambda)\right)_{\lambda>0}\right).\]
+    \item Si $X_1, \ldots, X_n\overset{i.i.d.}{\sim} \mathcal{P}oiss(\lambda)$, pour un $\lambda>0$ 
+    inconnu: \[
+        \left(\mathbb{N}, \mathcal{P}(\mathbb{N}), 
+        \left(\mathcal{P}oiss(\lambda)\right)_{\lambda>0}\right).\]
+    \item Si $X_1, \ldots, X_n\overset{i.i.d.}{\sim}\mathcal{N}(\mu, \sigma^2)$, pour un $\mu\in\R$ 
+    inconnu et $\sigma^2>0$: \[
+        \left(\R, \mathcal{B}(\R), \left(\mathcal{N}(\mu, \sigma^2) 
+        \right)_{(\mu, \sigma^2)\in \R \times \R_+^*}
+        \right).\]
+\end{enumerate}
+\end{itemize}
+\end{frame}
+ 
+\section{Identification}
+\frame{\sectionpage}
+
+\begin{frame}
+    [allowframebreaks]{\sectionpage}
+    \begin{itemize}
+        \item Le paramètre $\theta$ est qualifié d'\textbf{identifié} ssi l'application 
+        $\theta\in \Theta\mapsto \Prob_\theta$ est injective, i.e., \begin{align*}
+            \theta\neq \theta^\prime &\Rightarrow\Prob_{\theta} \neq \Prob_{\theta^\prime}
+        \end{align*}
+        \begin{enumerate}
+            \item Dans tous les exemples précédents le paramètre était identifié.
+            \item Si $X_i = \Ind(U_i \geq 0)$, où 
+            $U_1, U_2, \ldots, U_n \overset{i.i.d.}{\sim}\mathcal{N}(\mu, \sigma^2)$, pour un $\mu \in \R$ 
+            et $\sigma^2 >0$, tous les deux inobservés: $\mu$ et $\sigma^2$ ne sont pas identifiés. 
+            Néanmoins $\mu/\sigma$ l'est.
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\section{Estimation des paramètres}
+\frame{\sectionpage}
+
+\begin{frame}
+    [allowframebreaks]{\sectionpage}
+    \begin{itemize}
+        \item \textbf{\underline{Idée:}} étant donné un échantillon $X_1, X_2, \ldots, X_n$ et 
+        un modèle statistique $\left(\mathcal{E}, \mathcal{F}, (\Prob_\theta)_{\theta\in\Theta}\right)$, 
+        on veut estimer le paramètre $\theta$.
+        \item \textbf{\underline{Définitions}}:\begin{enumerate}[-]
+            \item \textbf{Statistique}: toute fonction mesurable de l'échantillon, e.g., $\bar{X}_n$, $\max_i X_i$, 
+            $X_1 + \log(1+\abs{X_n})$, variance empirique, etc, \ldots
+            \item \textbf{Estimateur} de $\theta$: toute statistique dont l'expression ne dépend pas de $\theta$.
+            \item Un estimateur $\hat{\theta}$ de $\theta$ est \textbf{faiblement consistant/convergent} ssi: 
+            \begin{align*}
+                \hat{\theta}_n & \limp \theta \quad (\textrm{par rapport à} \ \Prob_\theta).
+            \end{align*}
+            \textbf{Remarque}: lorsque la convergence est presque sûre(i.e., "$\limps$" à la place de 
+            "$\limp$"), l'estimateur est \textbf{fortement consistant/convergent}.
+            \framebreak
+            \item \textbf{Biais} d'un estimateur $\hat{\theta}_n$ de $\theta$: 
+            \[
+                \Exp(\hat{\theta}_n) - \theta.
+                \]
+            \item \textbf{Risque(ou risque quadratique)} d'un estimateur $\hat{\theta}_n$:
+            \[
+                \Exp\left(\abs{\hat{\theta}_n - \theta}^2\right).
+                \] 
+                \textbf{Remarque}: si $\Theta \subseteq \R$, 
+                \[ 
+                    \textrm{Risque quadratique} = \textrm{Biais}^2 + \textrm{Variance}.
+                    \]
+        \end{enumerate}
+
+    \end{itemize}
+\end{frame}
+
+\section{Intervalles de confiance}
+\frame{\sectionpage}
+\begin{frame}
+    [allowframebreaks]{\sectionpage}
+    \begin{itemize}
+        \item Soit un modèle statistique $\left(\mathcal{E}, \mathcal{F}, (\Prob_\theta)_{\theta\in\Theta}\right)$ 
+        sur les observation $X_1, X_2, \ldots, X_n$, et supposons $\Theta\subseteq\R$.
+        \item \textbf{\underline{Définitions}}: pour $\alpha\in(0, 1)$.
+        \begin{enumerate}[-]
+            \item \textbf{Intervalle de confiance(C.I.) de niveau $1-\alpha$} pour $\theta$: 
+            tout intervalle aléatoire(i.e., dépendant de $X_1, X_2, \ldots, X_n$) $\mathcal{IC}$ 
+            dont les bornes ne dépendent pas de $\theta$ et tel que: 
+            \begin{align*}
+                \Prob\left(\mathcal{IC}\ni\theta\right) &\geq 1-\alpha, \quad \forall \theta \in \Theta.
+            \end{align*}
+            \item \textbf{Intervalle de confiance(C.I.) de niveau asymptotique  $1-\alpha$} pour $\theta$: 
+            tout intervalle aléatoire $\mathcal{IC}$ 
+            dont les bornes ne dépendent pas de $\theta$ et tel que: 
+            \begin{align*}
+                \underset{n \to \infty}{\lim}\Prob_\theta\left(\mathcal{IC}\ni\theta\right) &\geq 1-\alpha, \quad \forall \theta \in \Theta.
+            \end{align*}
+        \end{enumerate}
+        \framebreak
+        \item \textbf{\underline{Exemple}}: Soit $X_1, X_2, \ldots, X_n \overset{i.i.d.}{\sim}Ber(p)$, 
+        pour un $p\in (0, 1)$ inconnu.
+        \begin{enumerate}[-]
+            \item LGN:  la moyenne empirique $\bar{X}_n$ est un estimateur fortement consistant de $p$.
+            \item Soit $t_\alpha$ le quantile d'ordre $(1-\frac{\alpha}{2})$ de la loi $\mathcal{N}(0, 1)$ et: 
+            \begin{align*}
+                \mathcal{IC}&=\left[\bar{X}_n - \frac{t_\alpha\sqrt{p(1-p)}}{\sqrt{n}}; 
+                \bar{X}_n + \frac{t_\alpha\sqrt{p(1-p)}}{\sqrt{n}}\right].
+            \end{align*}
+            \item TCL: 
+            \begin{align*}
+                \underset{n \to \infty}{\lim} \Prob_p(\mathcal{IC}\ni p) &= 1-\alpha, \quad \forall p\in(0,1).
+            \end{align*}
+            \item \textbf{Problème}: $\mathcal{IC}$ dépend de $p$!
+            \framebreak
+            \item \textbf{Deux solutions}:
+            \begin{enumerate}[(i)]
+                \item Remplacer $p(1-p)$ par  $1/4$(car $p(1-p)\leq 1/4$).
+                \item Remplacer $p$ par $\bar{X}_n$ dans $\mathcal{IC}$ et utiliser le théorème de Slutsky.
+            \end{enumerate}
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+
+
+%\begin{frame}[allowframebreaks]{References}
+%\bibliographystyle{jpe}
+%\bibliography{../Biblio}
+%\end{frame}
+
+\end{document}
