@@ -1,4 +1,4 @@
-\select@language {french}
+\babel@toc {french}{}
 \beamer@sectionintoc {1}{Mod\IeC {\`e}le statistique}{3}{0}{1}
 \beamer@sectionintoc {2}{Identification}{9}{0}{2}
 \beamer@sectionintoc {3}{Estimation des param\IeC {\`e}tres}{12}{0}{3}
