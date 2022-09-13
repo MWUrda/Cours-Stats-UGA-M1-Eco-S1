@@ -2,9 +2,9 @@
 \headcommand {\beamer@framepages {1}{1}}
 \headcommand {\slideentry {0}{0}{2}{2/2}{}{0}}
 \headcommand {\beamer@framepages {2}{2}}
-\headcommand {\sectionentry {1}{Pr\IeC {\'e}sentation}{3}{Pr\IeC {\'e}sentation}{0}}
 \headcommand {\beamer@sectionpages {1}{2}}
 \headcommand {\beamer@subsectionpages {1}{2}}
+\headcommand {\sectionentry {1}{Pr\IeC {\'e}sentation}{3}{Pr\IeC {\'e}sentation}{0}}
 \headcommand {\slideentry {1}{0}{1}{3/3}{}{0}}
 \headcommand {\beamer@framepages {3}{3}}
 \headcommand {\slideentry {1}{0}{2}{4/4}{}{0}}
@@ -17,9 +17,9 @@
 \headcommand {\beamer@framepages {6}{7}}
 \headcommand {\slideentry {1}{0}{4}{6/8}{}{0}}
 \headcommand {\beamer@framepages {6}{8}}
-\headcommand {\sectionentry {2}{Introduction}{9}{Introduction}{0}}
 \headcommand {\beamer@sectionpages {3}{8}}
 \headcommand {\beamer@subsectionpages {3}{8}}
+\headcommand {\sectionentry {2}{Introduction}{9}{Introduction}{0}}
 \headcommand {\slideentry {2}{0}{1}{9/9}{}{0}}
 \headcommand {\beamer@framepages {9}{9}}
 \headcommand {\slideentry {2}{0}{2}{10/10}{}{0}}
@@ -46,9 +46,9 @@
 \headcommand {\beamer@framepages {17}{20}}
 \headcommand {\slideentry {2}{0}{6}{21/21}{}{0}}
 \headcommand {\beamer@framepages {21}{21}}
-\headcommand {\sectionentry {3}{Retour sur les diff\IeC {\'e}rents types de convergence}{22}{Retour sur les diff\IeC {\'e}rents types de convergence}{0}}
 \headcommand {\beamer@sectionpages {9}{21}}
 \headcommand {\beamer@subsectionpages {9}{21}}
+\headcommand {\sectionentry {3}{Retour sur les diff\IeC {\'e}rents types de convergence}{22}{Retour sur les diff\IeC {\'e}rents types de convergence}{0}}
 \headcommand {\slideentry {3}{0}{1}{22/22}{}{0}}
 \headcommand {\beamer@framepages {22}{22}}
 \headcommand {\slideentry {3}{0}{2}{23/23}{}{0}}
@@ -83,13 +83,13 @@
 \headcommand {\beamer@framepages {37}{37}}
 \headcommand {\slideentry {3}{0}{11}{37/38}{}{0}}
 \headcommand {\beamer@framepages {37}{38}}
-\headcommand {\sectionentry {4}{R\'ef\'erences}{39}{R\'ef\'erences}{0}}
 \headcommand {\beamer@sectionpages {22}{38}}
 \headcommand {\beamer@subsectionpages {22}{38}}
+\headcommand {\sectionentry {4}{R\'ef\'erences}{39}{R\'ef\'erences}{0}}
 \headcommand {\slideentry {4}{0}{0}{39/39}{}{0}}
 \headcommand {\beamer@framepages {39}{39}}
 \headcommand {\beamer@partpages {1}{39}}
 \headcommand {\beamer@subsectionpages {22}{39}}
 \headcommand {\beamer@sectionpages {22}{39}}
 \headcommand {\beamer@documentpages {39}}
-\headcommand {\def \inserttotalframenumber {39}}
+\headcommand {\gdef \inserttotalframenumber {39}}

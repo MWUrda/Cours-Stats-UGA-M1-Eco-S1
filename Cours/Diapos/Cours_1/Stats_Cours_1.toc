@@ -1,4 +1,4 @@
-\select@language {french}
+\babel@toc {french}{}
 \beamer@sectionintoc {1}{Pr\IeC {\'e}sentation}{3}{0}{1}
 \beamer@sectionintoc {2}{Introduction}{9}{0}{2}
 \beamer@sectionintoc {3}{Retour sur les diff\IeC {\'e}rents types de convergence}{22}{0}{3}
