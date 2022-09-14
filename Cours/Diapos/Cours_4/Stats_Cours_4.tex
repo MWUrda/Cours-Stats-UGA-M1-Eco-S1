@@ -1,0 +1,353 @@
+%\documentclass[ignorenonframetext, compress, 9pt, xcolor=svgnames]{beamer} 
+\input{../Config_diapos}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\usepackage{enumerate}   
+\usepackage{multirow}
+\usepackage{txfonts}
+\usepackage{mathrsfs}
+\usepackage{pgfplots}
+\pgfplotsset{compat = newest}
+\usetikzlibrary{positioning, arrows.meta}
+\usepgfplotslibrary{fillbetween}
+\newcommand{\A}{(0,0) ++(135:2) circle (2)}
+\newcommand{\B}{(0,0) ++(45:2) circle (2)}
+\DeclareMathOperator{\C}{C}
+\DeclareMathOperator{\util}{u}
+%\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\setbeamersize{text margin left=1.2cm,text margin right=1.2cm} 
+\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\usepackage{xr}
+%\externaldocument{Econometrie1_UGA_P2e}
+  \usepackage{eso-pic}
+%\newcommand\AtPagemyUpperLeft[1]{\AtPageLowerLeft{%
+%\put(\LenToUnit{0.9\paperwidth},\LenToUnit{0.85\paperheight}){#1}}}
+%\AddToShipoutPictureFG{
+ % \AtPagemyUpperLeft{{\includegraphics[width=1.1cm,keepaspectratio]{logoUGA2020.pdf}}}
+%}%
+
+%\setbeamercolor{title}{fg=black}
+%\setbeamercolor{frametitle}{fg=black}
+%\setbeamercolor{section in head/foot}{fg=black}
+%\setbeamercolor{author in head/foot}{bg=Brown}
+%\setbeamercolor{date in head/foot}{fg=Brown}
+\AtBeginSection[]
+  {
+    \ifnum \value{framenumber}>1
+      \begin{frame}<beamer>
+      \frametitle{Plan}
+      \tableofcontents[currentsection]
+      \end{frame}
+    \else
+    \fi
+  }
+\setbeamertemplate{section page}
+{
+    \begin{centering}
+    \begin{beamercolorbox}[sep=11pt,center]{part title}
+    \usebeamerfont{section title}\thesection.~\insertsection\par
+    \end{beamercolorbox}
+    \end{centering}
+}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}}
+\title[]{ \textbf{Inférence statistique}}
+\subtitle{Cours 4: Méthode de Moments}
+\date{\today}
+\author{Michal W. Urdanivia\inst{*}}
+\institute{\inst{*}UGA, Facult\'e d'\'Economie, GAEL, \\e-mail: \href{mailto:michal.wong-urdanivia@univ-grenoble-alpes.fr}{michal.wong-urdanivia@univ-grenoble-alpes.fr}}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}
+%}
+\begin{document}
+%%% TIKZ STUFF
+\usetikzlibrary{positioning}
+\usetikzlibrary{snakes}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{matrix,shapes,arrows,fit,tikzmark}
+\usetikzlibrary{shapes}
+\tikzset{   
+        every picture/.style={remember picture,baseline},
+        every node/.style={anchor=base,align=center,outer sep=1.5pt},
+        every path/.style={thick},
+        }
+\newcommand\marktopleft[1]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-a) at (-.3em,.3em) {};%
+}
+\newcommand\markbottomright[2]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-b) at (0em,0em) {};%
+}
+\tikzstyle{every picture}+=[remember picture] 
+\tikzstyle{mybox} =[draw=black, very thick, rectangle, inner sep=10pt, inner ysep=20pt]
+\tikzstyle{fancytitle} =[draw=black,fill=red, text=white]
+\tikzstyle{observed}=[draw,circle,fill=gray!50]
+
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}{Plan}
+ \tableofcontents
+    \end{frame}
+%\begin{frame}
+%\frametitle{Contenu}
+%\tableofcontents[pausesections, pausesubsections]
+%\end{frame}
+
+%\section{Qu'est-ce que l’économétrie ? A quoi (à qui) ça sert ?}
+%\frame{\sectionpage}
+%\begin{frame}
+%  \tableofcontents  
+%\end{frame}
+
+\section{Introduction}
+\frame{\sectionpage}
+
+\begin{frame}[allowframebreaks]{Théorème d'approximation de  Weierstrass}
+    \begin{itemize}
+        \item \textbf{\underline{Théorème}}
+        \begin{enumerate}[-]
+            \item Soit $f$ une fonction continue sur l'intervalle $[a, b]$, alors, pour tout $\epsilon>0$, il existe 
+            $a_0, a_1, \ldots, a_d \in \R$ tels que, \begin{align*}
+                \max_{x\in[a, b]}\abs{f(x) - \sum_{k=1}^d a_kx^k}&<\epsilon.
+            \end{align*}
+            \item Autrement dit: \textbf{les fonctions continues peuvent être approchées arbitrairement par des polynômes}.
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    [allowframebreaks]{Application statistique}
+    \begin{itemize}
+        \item Soit un échantillon de v.a. i.i.d., $X_1, X_2, \ldots, X_n$ associé à un modèle statistique qu'on suppose identifié,
+        $\left(\mathcal{E}, \mathcal{F}, (\Prob_\theta)_{\theta\in \Theta}\right)$.
+        \item On note $\theta^*$ le vrai paramètre.
+        \item Supposons que pour tout $\theta$, la loi $\Prob_\theta$ a la fonction  de densité $f_\theta$.
+        \item Si nous trouvons un $\theta$ tel que,
+        \begin{align*}
+            \int h(x)f_{\theta^*}(x)\mathrm{d}x &=\int h(x)f_{\theta}(x)\mathrm{d}x
+        \end{align*}
+        pour toutes les fonctions (continues et bornées) $h$, alors $\theta = \theta^*$.
+        \item En remplaçant les espérances par des moyennes: il s'agit de trouver un estimateur $\hat{\theta}$ tel que, 
+        \begin{align*}
+            \frac{1}{n}\sumin h(X_i) &=\int h(x)f_{\hat{\theta}}(x)\mathrm{d}x
+        \end{align*}
+        pout toutes les fonctions continues et bornées $h$.
+        \item \textbf{Problème:} il y a une \textbf{infinité} de fonctions de la sort(infaisable).
+        
+        \framebreak
+
+        \item Par application du TAW, il suffit de considérer des polynômes: 
+        \begin{align*}
+            \frac{1}{n}\sumin\sum_{k=0}^d a_k X_i^k &= \int \sum_{k=0}^d a_kx^kf_{\hat{\theta}}(x)\mathrm{d}x, \ \forall a_0, a_1, \ldots, a_d\in \R.
+        \end{align*}
+        Soit encore une infinité d'équations: 
+        \item Pour sa part, il suffit de considérer,
+        \begin{align*}
+            \frac{1}{n}\sumin X_i^k = \int x^k f_{\hat{\theta}(x)}\mathrm{d}x, \forall k=1, 2, \ldots, d,
+        \end{align*}
+        (seulement $d+1$ équations).
+        \item La quantité $m_k(\theta):= \int x^kf_\theta(x)\mathrm{d}x$ est le moment d'ordre $k$(ou $k$-ième moment) de $\Prob_\theta$.
+        \item On peut aussi l'écrire $m_k(\theta)=\Exp_\theta(X^k)$. 
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Quadrature de Gauss}
+    \begin{itemize}
+        \item L'approximation de Weierstrass présente un certain nombre de limitations: \begin{enumerate}[i)]
+            \item ne s'applique qu'à des fonctions continues(ceci peut être réglé),
+            \item ne s'applique que sur des intervalles $[a,b]$,
+            \item ne nous dit pas ce que $d$ doit être(i.e., $\#$ de moments).
+        \end{enumerate}
+        \item Qu'en est-il pour $\mathcal{E}$ discret(cas où à $\Prob_\theta$ on 
+        associe une fonction de masse et non de densité)?
+        \framebreak
+        \item Supposons que $\mathcal{E} = \{x_1, x_2, \ldots, x_r\}$ est fini avec $r$ valeurs possibles.
+        \item La fonction de masse est alors caractérisée par $r-1$ paramètres,
+        \[
+        \prob(x_1), \prob(x_2), \ldots, \prob(x_{r-1}),
+        \]
+        car le dernier est donné par les premiers $r-1$ paramètres,
+        \[
+        \prob_r = 1-\sum_{j=1}^{r-1}\prob(x_j).
+        \]
+        \item Avec un peu de chance, il ne faudra pas plus que $d=r-1$
+         paramètres pour obtenir la fonction de masse $\prob(\cdot)$.
+
+         \framebreak
+         \item Notons que pour tout $k=1, 2, \ldots, r_1$,
+         \begin{align*}
+             m_k &:=\Exp(X^k) = \sum_{j=1}^r\prob(x_j)x_j^k,
+         \end{align*}
+         et,
+         \begin{align*}
+             \sum_{j=1}^r\prob(x_j)&=1
+         \end{align*}
+         \item Ceci est un système d'équations linéaires avec les inconnues, $\prob(x_1), \prob(x_2), \ldots, \prob(x_r)$.
+         \item Il est peut être écrit sous une forme compacte(matricielle): 
+         \begin{align*}
+            \begin{pmatrix}
+                1&1&\ldots&1\\
+                x_1^1&x_2^1&\ldots&x_r^1\\
+                x_1^2&x_2^2&\ldots&x_r^2\\
+                \vdots&&\ddots&\vdots\\
+                x_1^{r-1}&x_2^{r-1}&\ldots&x_r^{r-1}
+             \end{pmatrix} \cdot \begin{pmatrix}
+                \prob(x_1)\\
+                \prob(x_2)\\
+                \vdots\\
+                \prob(x_{r-1})\\
+                \prob(x_r)
+             \end{pmatrix}
+             &=\begin{pmatrix}
+                1\\
+                 m_1\\
+                 m_2\\
+                 \vdots\\
+                 m_{r-1}
+             \end{pmatrix}
+         \end{align*}
+         \framebreak
+         \item Il faut vérifier que l'inversibilité: \textbf{déterminant de Vandermonde}
+         \begin{align*}
+            \det\begin{pmatrix}
+                1&1&\ldots&1\\
+                x_1^1&x_2^1&\ldots&x_r^1\\
+                x_1^2&x_2^2&\ldots&x_r^2\\
+                \vdots&&\ddots&\vdots\\
+                x_1^{r-1}&x_2^{r-1}&\ldots&x_r^{r-1}
+             \end{pmatrix} 
+             &= \prod_{1<j<k<r}(x_j-x_k) \neq 0
+         \end{align*}
+         \framebreak
+         \item Donc, si nous avons les moments $m_1, m_2, \ldots, m_{r-1}$, il y a une seule fonction de masse avec ces moments.
+         Et elle est donnée par,
+         \begin{align*}
+             \begin{pmatrix}
+                \prob(x_1)\\
+                \prob(x_2)\\
+                \vdots\\
+                \prob(x_{r-1})
+             \end{pmatrix}
+             &=
+             {
+             \begin{pmatrix}
+                1&1&\ldots&1\\
+                x_1^1&x_2^1&\ldots&x_r^1\\
+                x_1^2&x_2^2&\ldots&x_r^2\\
+                \vdots&&\ddots&\vdots\\
+                x_1^{r-1}&x_2^{r-1}&\ldots&x_r^{r-1}
+             \end{pmatrix} }^{-1}
+             \cdot
+             \begin{pmatrix}
+                1\\
+                 m_1\\
+                 m_2\\
+                 \vdots\\
+                 m_{r-1}
+             \end{pmatrix}
+         \end{align*}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Conclusion à partir du TAW et de la quadrature de Gauss}
+    \begin{itemize}
+        \item Les moments d'une v.a., fournissent une information importante sur la fonction de densité ou de masse.
+        \item En estimant avec précision ces moments on devrait être capables de récupérer/retrouver la loi génératrice des données.
+        \item Dans un cadre paramétrique où la loi des observations $\Prob_\theta$ est connue aux paramètres $\theta$ près, il est fréquent de n'avoir 
+        besoin que d'un petit nombre de moments pour obtenir(estimer) $\theta$, ceci variant d'un cas à l'autre.
+        \item Règle basique: quand $\theta\in \Theta\subseteq\R^d$, on a besoin de $d$ moments.
+    \end{itemize}
+\end{frame}
+
+\section{Méthode des Moments}
+\frame{\sectionpage}
+
+\begin{frame}[allowframebreaks]{Principe d'estimation de la MM}
+\begin{itemize}
+    \item Soit $X_1, X_2, \ldots, X_n$ un échantillon i.i.d. pour le modèle statistique 
+    $\left(\mathcal{E}, \mathcal{F}, (\Prob_\theta)_{\theta\in\Theta}\right)$. 
+    \item On suppose $\Theta\subseteq \R^d$, pour un $d\geq 1$.
+    \begin{enumerate}[-]
+        \item \textbf{Moments théorique(ou de Population):} 
+        \begin{align*}
+            m_k(\theta) &:=\Exp_\theta(X^k), \quad 1\leq k\leq d.
+        \end{align*}
+        \item \textbf{Moments empiriques:}
+        \begin{align*}
+            \hat{m}_k :=\frac{1}{n}\sumin X_i^k, \quad 1\leq k\leq d.
+        \end{align*}
+    \end{enumerate}
+    \framebreak
+    \item Soit,\begin{align*}
+        \psi : \Theta \subseteq\R^d &\rightarrow \R^d\\
+        \theta&\mapsto (m_1(\theta), m_2(\theta), \ldots, m_d(\theta)).
+    \end{align*}
+    \item Supposons $\psi$ bijective, alors,\begin{align*}
+        \theta &= \psi^{-1}(m_1(\theta), m_2(\theta), \ldots, m_d(\theta)).
+    \end{align*}
+    \item \textbf{\underline{Définition:}} un estimateur des moments de $\theta$ est défini par, \begin{align*}
+        \hat{\theta}^{MM}_n &=\psi^{-1}(\hat{m}_1, \hat{m}_2, \ldots, \hat{m}_d),
+    \end{align*}
+    dès lors qu'il existe.
+\end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Analyse de $\hat{\theta}_n^{MM}$}\begin{itemize}
+        \item Notons: \begin{align*}
+            M(\theta) &:= \left(m_1(\theta), m_2(\theta), \ldots, m_d(\theta)\right),\\
+            \hat{M} &=\left(\hat{m}_1, \hat{m}_2, \ldots, \hat{m}_d \right),\\
+            \Vr(\theta) &=\underbrace{\Var_{\theta}\left(X, X^2, \ldots, X^d\right)}_{\text{Matrice des variances-covariances de $(X, X^2, \ldots, X^d)$, quand $X\sim\Prob_\theta$.}}
+        \end{align*}.
+        \item Supposons $\psi^{-1}$ continûment dérivable en $M(\theta)$. Notons $\nabla\psi^{-1}_{M(\theta)}$ la matrice $d\times d$ du gradient en ce point.
+        \framebreak 
+        \item \textbf{LGN}: $\hat{\theta}_n^{MM}$ est faiblement/fortement convergent.
+        \item \textbf{TCL}: \begin{align*}
+            \sqrt{n}\left(\hat{M}- M(\theta)\right)&\limd \mathcal{N}(0, \Vr(\theta)) \quad \text{par rapport à $\Prob_\theta$.}
+        \end{align*}
+        et en utilisant la méthode du delta(voir diapos suivantes),
+        \framebreak
+        \item \textbf{\underline{Théorème}}:\begin{align*}
+            \sqrt{n}\left(\hat{\theta}^{MM}_n - \theta\right) &\limd\mathcal{N}(0, \Gamma(\theta)) \quad \text{par rapport à $\Prob_\theta$},
+        \end{align*}
+        où \begin{align*}
+            \Gamma(\theta)) = \left(\nabla\psi^{-1}_{M(\theta)}\right)^\top \Vr(\theta)\left(\nabla\psi^{-1}_{M(\theta)}\right).
+        \end{align*}
+    \end{itemize}
+\end{frame}
+\begin{frame}[allowframebreaks]{Méthode du Delta dans le cas multivarié}
+\begin{itemize}
+    \item Soit $(T_n)_{n\geq 1}$ une suite de vecteurs aléatoires dans $\R^p$(pour $p\geq 1$) telle que,\begin{align*}
+        \sqrt{n}\left(T_n - \theta\right)&\limd\mathcal{N}(0, \Vr),
+    \end{align*}
+    pour un $\theta \in \R^p$ et une matrice symétrique et semi-définie positive $\Vr\in \R^p\times p$.
+    \item Soit $g: \R^p\rightarrow\R^k$(pour $k\geq 1$) une fonction continûment dérivable en $\theta$. 
+    \item Alors,\begin{align*}
+        \sqrt{n}\left(g(T_n) - g(\theta)\right) &\limd 
+        \mathcal{N}\left(0, \nabla g(\theta)^\top\Vr \nabla g(\theta)\right),
+    \end{align*}
+    où,\begin{align*}
+        \nabla g(\theta) := \left(\frac{\partial g_j}{\partial \theta_i}\right)_{1\leq i\leq d,  1\leq j\leq k}\in\R^{k\times d}.
+    \end{align*}
+\end{itemize}    
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{MV vs MM}\begin{itemize}
+        \item \textbf{Risque quadratique}: en général l'estimateur du MV est plus précis.
+        \item \textbf{Problème de calcul}: l'estimateur du MV ne peut pas être obtenu en forme analytique: 
+        \begin{enumerate}[-]
+            \item Quand la vraisemblance est concave, on peut utiliser des algorithmes d'optimisation numérique(
+                méthodes du point intérieur, gradient descendant, etc).
+            \item Si la vraisemblance n'est pas concave: démarche heuristique, maxima locaux.
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\end{document}

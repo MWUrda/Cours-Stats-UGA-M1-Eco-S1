@@ -1,0 +1,500 @@
+%\documentclass[ignorenonframetext, compress, 9pt, xcolor=svgnames]{beamer} 
+\input{../Config_diapos}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\usepackage{enumerate}   
+\usepackage{multirow}
+\usepackage{txfonts}
+\usepackage{mathrsfs}
+\usepackage{pgfplots}
+\pgfplotsset{compat = newest}
+\usetikzlibrary{positioning, arrows.meta}
+\usepgfplotslibrary{fillbetween}
+\newcommand{\A}{(0,0) ++(135:2) circle (2)}
+\newcommand{\B}{(0,0) ++(45:2) circle (2)}
+\DeclareMathOperator{\C}{C}
+\DeclareMathOperator{\util}{u}
+%\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\setbeamersize{text margin left=1.2cm,text margin right=1.2cm} 
+\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\usepackage{xr}
+%\externaldocument{Econometrie1_UGA_P2e}
+  \usepackage{eso-pic}
+%\newcommand\AtPagemyUpperLeft[1]{\AtPageLowerLeft{%
+%\put(\LenToUnit{0.9\paperwidth},\LenToUnit{0.85\paperheight}){#1}}}
+%\AddToShipoutPictureFG{
+ % \AtPagemyUpperLeft{{\includegraphics[width=1.1cm,keepaspectratio]{logoUGA2020.pdf}}}
+%}%
+
+%\setbeamercolor{title}{fg=black}
+%\setbeamercolor{frametitle}{fg=black}
+%\setbeamercolor{section in head/foot}{fg=black}
+%\setbeamercolor{author in head/foot}{bg=Brown}
+%\setbeamercolor{date in head/foot}{fg=Brown}
+\AtBeginSection[]
+  {
+    \ifnum \value{framenumber}>1
+      \begin{frame}<beamer>
+      \frametitle{Plan}
+      \tableofcontents[currentsection]
+      \end{frame}
+    \else
+    \fi
+  }
+\setbeamertemplate{section page}
+{
+    \begin{centering}
+    \begin{beamercolorbox}[sep=11pt,center]{part title}
+    \usebeamerfont{section title}\thesection.~\insertsection\par
+    \end{beamercolorbox}
+    \end{centering}
+}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}}
+\title[]{ \textbf{Inférence statistique}}
+\subtitle{Cours 5: Tests d'Hypothèses Paramétriques}
+\date{\today}
+\author{Michal W. Urdanivia\inst{*}}
+\institute{\inst{*}UGA, Facult\'e d'\'Economie, GAEL, \\e-mail: \href{mailto:michal.wong-urdanivia@univ-grenoble-alpes.fr}{michal.wong-urdanivia@univ-grenoble-alpes.fr}}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}
+%}
+\begin{document}
+%%% TIKZ STUFF
+\usetikzlibrary{positioning}
+\usetikzlibrary{snakes}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{matrix,shapes,arrows,fit,tikzmark}
+\usetikzlibrary{shapes}
+\tikzset{   
+        every picture/.style={remember picture,baseline},
+        every node/.style={anchor=base,align=center,outer sep=1.5pt},
+        every path/.style={thick},
+        }
+\newcommand\marktopleft[1]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-a) at (-.3em,.3em) {};%
+}
+\newcommand\markbottomright[2]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-b) at (0em,0em) {};%
+}
+\tikzstyle{every picture}+=[remember picture] 
+\tikzstyle{mybox} =[draw=black, very thick, rectangle, inner sep=10pt, inner ysep=20pt]
+\tikzstyle{fancytitle} =[draw=black,fill=red, text=white]
+\tikzstyle{observed}=[draw,circle,fill=gray!50]
+
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}{Plan}
+ \tableofcontents
+    \end{frame}
+%\begin{frame}
+%\frametitle{Contenu}
+%\tableofcontents[pausesections, pausesubsections]
+%\end{frame}
+
+%\section{Qu'est-ce que l’économétrie ? A quoi (à qui) ça sert ?}
+%\frame{\sectionpage}
+%\begin{frame}
+%  \tableofcontents  
+%\end{frame}
+
+\section{Introduction}
+\frame{\sectionpage}
+
+\begin{frame}[allowframebreaks]{Heuristique}
+    \begin{itemize}
+        \item \textbf{\underline{Idée clé:} décider de rejeter ou d'accepter des hypothèses.}
+        \item \textbf{Exemples:}
+        \begin{enumerate}[-]
+            \item Après avoir lancé une pièce plusieurs fois, on veut décider(tester) à partir de ces résultats si 
+            la pièce peut être considérée comme équilibrée.
+            \item Après avoir prélevé le sang d'un patients et mesuré la concentration d'anticorps dans l'échantillon on veut décider(tester)
+            si le patient peut être considéré comme porteur d'un virus.
+        \end{enumerate}
+        \item Formellement ceci peut être écrit ainsi:
+        \begin{enumerate}[-]
+            \item décider si $p = 1/2$ à partir d'un échantillon de $n$ v.a. de Bernouilli i.i.d.;
+            \item décider si $c> c_0$ à partir d'un échantillon de $n$ v.a. i.i.d. de loi normale $\mathcal{N}(c, \sigma^2)$.
+        \end{enumerate}
+        \framebreak
+        \item \textbf{\underline{Exemple 1:}} une pièce est lancée 80 fois, et le résultat est pile 54 fois. 
+        Peut-on conclure \emph{significativement} que la pièce est déséquilibrée? \begin{enumerate}[-]
+            \item $n = 80$, $X_1, X_2, \ldots, X_n \overset{i.i.d.}{\sim}\mathcal{B}er(p)$,
+            \item $\bar{X}_n = 54/80 = 0.68$,
+            \item Si cela était vrai que $p = 0.5$, par le TCL et le théorème de Slutsky,\begin{align*}
+                \sqrt{n}\frac{\bar{X}_n - 0.5}{\sqrt{\bar{X}_n}(1-\bar{X}_n)} &\approx\mathcal{N}(0, 1),
+            \end{align*}
+            \item $\sqrt{n}\frac{\bar{X}_n - 0.5}{\sqrt{\bar{X}_n}(1-\bar{X}_n)} \approx 3.45$,
+            \item conclusion: il paraît assez raisonnable de rejeter l'hypothèse "$p = 0.5$".
+        \end{enumerate}
+        \framebreak
+        \item \textbf{\underline{Exemple 2:}} une pièce est lancée 30 fois, et le résultat est pile 13 fois. 
+        Peut-on conclure \emph{significativement} que la pièce est déséquilibrée? \begin{enumerate}[-]
+            \item $n = 80$, $X_1, X_2, \ldots, X_n \overset{i.i.d.}{\sim}\mathcal{B}er(p)$,
+             \item $\bar{X}_n = 54/80 = 0.68$,
+            \item Si cela était vrai que $p = 0.5$, par le TCL et le théorème de Slutsky,\begin{align*}
+            \sqrt{n}\frac{\bar{X}_n - 0.5}{\sqrt{\bar{X}_n}(1-\bar{X}_n)} &\approx\mathcal{N}(0, 1),
+             \end{align*}
+             \item $\sqrt{n}\frac{\bar{X}_n - 0.5}{\sqrt{\bar{X}_n}(1-\bar{X}_n)} \approx -0.77$,
+             \item conclusion: il paraît impossible de rejeter l'hypothèse "$p = 0.5$" de manière significative.
+            \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+
+\section{Formulation Statistique}
+\frame{\sectionpage}
+\begin{frame}
+    [allowframebreaks]{Définition du problème}
+    \begin{itemize}
+        \item Soit un échantillon de $n$ v.a. i.i.d. $X_1, X_2, \ldots, X_n$ et un modèle statistique 
+        $\left(\mathcal{E}, \mathcal{F}, (\Prob_\theta)_{\theta\in \Theta}\right)$.
+        \item Soit $\Theta_0$ et $\Theta_1$ des sous-ensembles disjoints de $\Theta$.
+        \item Considérons deux hypothèses: $\left\{  \begin{array}{lll}
+            H_0 &:&\theta\in \Theta_0\\
+            H_1 &:&\theta\in \Theta_1
+        \end{array}\right.$
+        \item $H_0$ est l'\textbf{hypothèse nulle} et $H_1$ est l'\textbf{hypothèse alternative}.
+        \item Si nous pensons que le vrai paramètre $\theta$ est soit dans $\Theta_0$, soit dans $\Theta_1$, alors on pourrait tester $H_0$ vs. $H_1$.
+        \item On veut décider si oui ou non il faut rejeter $H_0$(on cherche de l'information dans les données à l'encontre de $H_0$).
+    \framebreak
+         \item $H_0$ et $H_1$ ne sont pas symétriques. Par exemple si $H_0$: "le patient est malade"($c>c_0$) vs. $H_1$: "le 
+         patient est en bonne santé"($c\leq c_0$).
+         \item Un \textbf{test} est une statistique $\delta\in\{0, 1\}$ telle que: 
+         \begin{enumerate}[-]
+             \item  Si $\delta = 0$, $H_0$ n'est pas rejetée;
+             \item Si $\delta = 1$, $H_0$ est rejetée.
+         \end{enumerate}
+         \item Dans l'exemple du lancer de pièce: 
+         \begin{enumerate}[-]
+               \item $H_0:$ "$p=1/2$" vs. $H_1$: "$p\neq 1/2$",
+               \item et $\delta = \Ind_{\abs{ \sqrt{n}\frac{\bar{X}_n - 0.5}{\sqrt{\bar{X}_n}(1-\bar{X}_n)}} > C}$ pour un seuil $C >0$.
+               \item \textbf{Question:} comment choisir $C$?
+         \end{enumerate}
+         \framebreak
+         \item \textbf{Région de rejet} d'un test $\delta$: \begin{align*}
+             \mathcal{R}_{\delta} &=\{x\in \mathcal{E}^n: \delta(x) = 1\}.
+         \end{align*}
+         \item \textbf{Érreur du(de) premier(ère) type(espèce)} d'un test $\delta$(rejeter $H_0$ quand cette hypothèse est vraie):
+         \begin{align*}
+             \alpha_\delta : \Theta_0 &\rightarrow \R\\
+             \theta &\mapsto \Prob_\theta(\delta = 1).
+         \end{align*}
+         \item \textbf{Érreur du(de) deuxième type(espèce)} d'un test $\delta$(ne pas rejeter $H_0$ quand $H_1$ vraie):
+         \begin{align*}
+            \beta_\delta : \Theta_1 &\rightarrow \R\\
+            \theta &\mapsto \Prob_\theta(\delta = 0).
+        \end{align*}
+        \item \textbf{Puissance} du test $\delta$:
+        \begin{align*}
+            \pi_\delta &=\inf_{\theta\in\Theta_1}\left(1- \beta_\delta(\theta)\right).
+        \end{align*}
+        \framebreak 
+        \item Le \textbf{niveau} d'un test $\delta$ est $\alpha$ si,\begin{align*}
+            \alpha_\delta(\theta) &\leq \alpha,  \quad \forall \theta \in \Theta_0.
+        \end{align*}
+        \item Le \textbf{niveau asymptotique} d'un test $\delta$ est $\alpha$ si,\begin{align*}
+            \lim_{n\to \infty}\alpha_\delta(\theta) &\leq \alpha,  \quad \forall \theta \in \Theta_0.
+        \end{align*}
+        \item Typiquement la forme d'un test est donnée par,
+        \begin{align*}
+            \delta &=\Ind_{T_n> c},
+        \end{align*}
+        pour une statistique $T_n$ et un seuil $c\in \R$.
+        \item $T_n$ est alors appelée \textbf{statistique de test} et la région $\mathcal{R}_\delta$ est, 
+        \begin{align*}
+            \mathcal{R}_\delta := \left\{T_n > c\right\}.
+        \end{align*}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Un exemple}
+    \begin{itemize}
+        \item $X_1, X_2, \ldots, X_n \overset{i.i.d.}{\sim} \mathcal{B}er(p)$, pour $p\in (0, 1)$.
+        \item Test: \begin{align*}H_0: "p=1/2" &\text{vs.} H_1:  "p\neq 1/2",\end{align*}
+        avec un niveau asymptotique $\alpha\in(0,1)$.
+        \item Statistique: \begin{align*}
+            T_n &= \abs{ \sqrt{n}\frac{\hat{p}_n - 0.5}{\sqrt{\hat{p}_n(1-\hat{p}_n)}}}, 
+        \end{align*}
+        où $\hat{p}_n$ est l'estimateur du MV.
+        \item Si $H_0$ est vraie, alors par le TCL et le théorème de Slutsky, \begin{align*}
+            \Prob\left(T_n > q_{1-\alpha/2}\right)&\underset{n\to\infty}{\rightarrow} 0.05.
+        \end{align*}
+        \item Soit $\delta_\alpha = \Ind_{T_n>q_{1-\alpha/2}}$.
+        
+        \framebreak 
+
+        \item Revenons cas du lancer de pièce et fixons $\alpha=5\%$, d'où $q_{1-\alpha/2} = 1.96$, et alors:
+        \begin{enumerate}[-]
+            \item Dans l'exemple 1, $H_0$ est rejeté au niveau asymptotique de $5\%$ par le test $\delta_{5\%}$.
+            \item Dans l'exemple 2, $H_0$ n'est pas rejeté au niveau asymptotique de $5\%$ par le test $\delta_{5\%}$
+        \end{enumerate}
+        \item \textbf{Question}: dans l'exemple 1, pour quel niveau $\alpha$, le test $\delta_\alpha$ ne rejetterait $H_0$? et dans 
+        l'exemple 2 pour quel niveau $\alpha$ le test $\delta_\alpha$ rejetterait $H_0$?
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{P-value}
+    \begin{itemize}
+        \item \textbf{\underline{Définition}}: la p-value(asymptotique) d'un test $\delta_\alpha$ est le plus petit niveau(asymptotique)
+         $\alpha$ pour lequel $\delta_\alpha$ conduit à rejeter $H_0$. Elle est aléatoire car elle dépend de l'échantillon.
+         \item \textbf{\underline{Régle d'or:}} \begin{enumerate}[-]
+             \item $\text{p-value} < \alpha$ $\Leftrightarrow H_0$ est rejeté par $\delta_\alpha$ pour le niveau(asymptotique)$\alpha$.
+             \item Plus la p-value est petite, et plus on est confiant dans le rejet de $H_0$.
+         \end{enumerate}
+         \item Exemple 1: $\text{p-value} =\Prob\left(\abs{Z}>3.45\right)\ll 0.01$. 
+         \item Exemple 2: $\text{p-value} =\Prob\left(\abs{Z}>0.77\right)\approx 0.44$. 
+    \end{itemize}
+\end{frame}
+\section{Paradigme de Neyman-Pearson}
+\frame{\sectionpage}
+\begin{frame}
+    [allowframebreaks]{Idée de Neyman-Pearson}
+    \begin{itemize}
+        \item Pour une hypothèse donnée, parmi tous les tests de niveau(ou de niveau asymptotique)
+        $\alpha$, est-il possible de trouver celui qui a la puissance maximale?
+        \item \textbf{Exemple:} le test trivial $\delta = 0$ qui ne rejette jamais $H_0$ a un niveau parfait($\alpha = 0$) 
+        mais une puissance médiocre($\pi_\delta = 0$).
+        \item La théorie de Neyman-Pearson offre des test qui sont(le plus) puissant pour un niveau donné.
+        \item Nous allons seulement considérer certains cas.
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Rappel sur la loi du $\chi^2$}
+    \begin{itemize}
+        \item \textbf{\underline{Définition:}} pour un entier positif $d$, la loi du $\chi^2$ à $d$ degrés de liberté est la loi 
+        de la v.a. $Z_1^2 + Z_2^2+\dots+ Z_d^2$, où $Z_1, Z_2, \ldots, Z_d\overset{i.i.d.}{\sim}\mathcal{N}(0,1)$.
+        \item Exemples:\begin{enumerate}[-]
+            \item Si $Z\sim\mathcal{N}_d(\boldzero, \Id_d)$, alors $\norm{Z}^2_2 \sim \chi_d^2$.
+            \item Le théorème de Cochran énonce que pour $X_1, X_2, \ldots, X_n \overset{i.i.d.}{\sim} 
+            \mathcal{N}(\mu, \sigma^2)$, si $S_n$ est la variance empirique, alors,\begin{align*}
+                \frac{nS_n}{\sigma^2}&\sim \chi^2_{n-1}.
+            \end{align*}
+            \item $\chi^2_2 = \mathcal{E}xp(1/2)$.
+        \end{enumerate}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Rappel sur la loi de Student}
+    \begin{itemize}
+        \item \textbf{\underline{Définition:}} pour un entier positif $d$, la loi de Student à $d$ degrés de liberté 
+        (notée $t_d$) est la loi de la v.a. $\frac{U}{\sqrt{V/d}}$, où $U\sim\mathcal{N}(0,1)$, $V\sim\chi^2_d$, et $U\pperp{V}$.
+         \item Exemple: le théorème de Cochran énonce que pour $X_1, X_2, \ldots, X_n \overset{i.i.d.}{\sim}
+         \mathcal{N}(\mu, \sigma^2)$, si $S_n$ est la variance empirique, alors,\begin{align*}
+         \sqrt{n-1}\left(\frac{\bar{X}_n-\mu}{\sqrt{S}_n}\right)&\sim t_{n-1}.
+          \end{align*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    [allowframebreaks]{Test de Wald}
+    \begin{itemize}
+        \item Soit un échantillon de v.a. i.i.d., $X1, X_2,\ldots, X_n$ avec le modèle statistique 
+        $\left(\mathbf{E}, \mathbf{F}, (\Prob_{\theta})_{\theta\in\Theta}\right)$, où $\Theta\subseteq \R^d$(pour $d\geq 1$), et soit $\theta_0\in\Theta$ une valeur donnée de $\theta$. 
+        \item Considérons les hypothèses suivantes: \[\left\{
+            \begin{array}{lll}
+                H_0:&\theta  &= \theta_0,\\
+                H_1:&\theta  &\neq \theta_0.
+            \end{array}
+        \right.\]
+            \item Soit $\hat{\theta}^{MV}$ l'estimateur du MV, et supposons que les conditions techniques pour cet estimateur soient 
+            satisfaites.
+            \item Si $H_0$ est vraie, alors,\begin{align*}
+                \sqrt{n} \mathcal{I}(\hat{\theta}^{MV})^{1/2}\left(\hat{\theta}_n^{MV}-\theta_0\right) 
+                &\limd \mathcal{N}_d(\boldzero, \Id_d), \quad \text{par rapport à }  \Prob_{\theta_0}.
+            \end{align*}
+        \framebreak
+        \item D'où, \begin{align*}
+            \underbrace{n\left(\hat{\theta}_n^{MV}-\theta_0\right)^\top\mathcal{I}(\hat{\theta}^{MV})\left(\hat{\theta}_n^{MV}-\theta_0\right)}_{T_n}
+            &\limd \chi_d^2, \quad \text{par rapport à }  \Prob_{\theta_0}.
+        \end{align*}
+        \item Test de Wald de niveau asymptotique $\alpha\in(0,1)$:\begin{align*}
+            \delta &=\Ind_{T_n>q_{1-\alpha}},
+        \end{align*}
+        où $q_{1-\alpha}$ est le quantile $(1-\alpha)$ du $\chi^2_d$(voir tables).
+        \item Remarque: le test de Wald est aussi valide si $H_1$ présente la forme "$\theta > \theta_0$" ou 
+        "$\theta < \theta_0$" où "$\theta = \theta_1$", \ldots.
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Test du rapport de vraisemblance}
+    \begin{itemize}
+        \item Soit un échantillon de v.a. i.i.d., $X1, X_2,\ldots, X_n$ avec le modèle statistique 
+         $\left(\mathbf{E}, \mathbf{F}, (\Prob_{\theta})_{\theta\in\Theta}\right)$, où 
+         $\Theta\subseteq \R^d$(pour $d\geq 1$).
+         \item On considère que l'hypothèse nulle présente la forme, \begin{align*}
+             H_0 : (\theta_{r+1}, \theta_{r+2}, \ldots, \theta_d) &= (\theta_{r+1}^0, \theta_{r+2}^0, \ldots, \theta_d^0),
+         \end{align*}
+         pour des valeurs données $\theta_{r+1}^0, \theta_{r+2}^0, \ldots, \theta_d^0$.
+         \item Soit,
+         \begin{align*}
+             \hat{\theta}_n &=\arg\max_{\theta\in\Theta}\ell_n(\theta), \quad\text{(estimateur du MV)},
+         \end{align*}
+         et,
+         \begin{align*}
+            \hat{\theta}_n^c &=\arg\max_{\theta\in\Theta_0}\ell_n(\theta), \quad\text{(estimateur du MV contraint)}.
+         \end{align*}
+         \framebreak 
+        \item Statistique de test: \begin{align*}
+            T_n &= 2\left(\ell_n(\hat{\theta}_n) - \ell_n(\hat{\theta}_n^c)\right).
+        \end{align*}
+        \item \textbf{\underline{Théorème:}} supposons que $H_0$ soit vraie et que les conditions 
+        techniques de l'estimateur du MV soient satisfaites. Alors,
+        \begin{align*}
+            T_n &\limd \chi^2_{d-r}, \quad \text{par rapport à }  \Prob_{\theta}.
+        \end{align*}
+        \item Test du rapport de vraisemblance de niveau asymptotique $\alpha\in(0, 1)$: 
+        \begin{align*}
+            \delta &=\Ind_{T_n > q_{1-\alpha}},
+        \end{align*}
+        où $q_{1-\alpha}$ est le quantile $(1-\alpha)$ du $\chi^2_{d-r}$(voir tables).
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Tests d'hypothèses implicites}
+    \begin{itemize}
+        \item Soit $X_1, X_2, \ldots, X_n$ des v.a. i.i.d., et soit $\theta\in\R^d$ un paramètre associé à la loi de $X$(une v.a. "générique"). 
+        Cela peut être par exemple, un moment, un paramètre du modèle statistique, etc.
+        \item Soit $g:\R^d\to\R^k$ une application continûment dérivable(avec $k<d$).
+        \item Considérons les hypothèses suivantes:
+        \[
+        \begin{array}{lll}
+            H_0:&g(\theta)  &= 0\\
+            H_1:&g(\theta)  &\neq 0.
+        \end{array}\]
+        \item Par exemple: $g(\theta) = (\theta_1, \theta_2)$(ici $k=2$), ou $g(\theta) = \theta_1-\theta_2$(ici $k=1$), \ldots
+    
+    \framebreak 
+    \item Supposons qu'on dispose d'un estimateur asymptotiquement normal $\hat{\theta}_n$: \begin{align*}
+        \sqrt{n}(\hat{\theta}_n  - \theta)&\limd \mathcal{N}_d\left(\boldzero, \Sigma(\theta)\right).
+    \end{align*}
+    \item Méthode Delta: \begin{align*}
+        \sqrt{n}\left(g(\hat{\theta}_n) - g(\theta)\right)&\limd \mathcal{N}_k(\boldzero, \Gamma(\theta)),
+    \end{align*}
+    où $\Gamma(\theta) = \nabla g(\theta)^\top \Sigma(\theta)\nabla g(\theta)\in\R^{k\times k}$.
+    \item Supposons que $\Sigma(\theta)$ soit inversible, et $\nabla g(\theta)$ de rang $k$, de sorte que $\Gamma(\theta)$ 
+    soit aussi inversible et que, 
+    \begin{align*}
+        \sqrt{n} \Gamma(\theta)^{-1/2}\left(g(\hat{\theta}_n) - g(\theta)\right)&\limd \mathcal{N}_k(\boldzero, \Id_k).
+    \end{align*}
+    \framebreak
+    \item Par le théorème de Slutsky si $\Gamma(\theta)$ est continue en $\theta$,
+    \begin{align*}
+        \sqrt{n} \Gamma(\hat{\theta}_n)^{-1/2}\left(g(\hat{\theta}_n )- g(\theta)\right)&\limd \mathcal{N}_k(\boldzero, \Id_k).
+    \end{align*}
+    \item En conséquence, si $H_0$ est vraie, i.e., $g(\theta) = 0$,
+    \begin{align*}
+        \underbrace{n g(\hat{\theta}_n)^\top \Gamma^{-1}(\hat{\theta}_n)g(\hat{\theta}_n)}_{T_n} &\limd \chi^2_k.
+    \end{align*}
+    \item Test de niveau asymptotique $\alpha\in(0, 1)$: 
+    \begin{align*}
+        \delta &=\Ind_{T_n > q_{1-\alpha}},
+    \end{align*}
+    où $q_{1-\alpha}$ est le quantile $(1-\alpha)$ du $\chi^2_k$(voir tables).
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    [allowframebreaks]{Le cas multinomial: test du $\chi^2$}
+    \begin{itemize}
+        \item Soit $\mathcal{E} = \{a_1, a_2, \ldots, a_k\}$ un ensemble dénombrable et 
+        $(\Prob_{\mathbf{p}})_{\mathbf{p}\in\Delta_k}$ la famille de toutes les lois de probabilité sur $\mathcal{E}$: 
+        \begin{align*}
+            \Delta_k &=\{\mathbf{p} = (\prob_1, \prob_2, \ldots, \prob_k)\in(0, 1)^K: 
+            \sum_{j=1}^k\prob_j = 1\}.
+        \end{align*}
+        \item Pour $\mathbf{p}\in\Delta_k$ et $X\sim \Prob_{\mathbf{p}}$,
+        \begin{align*}
+            \Prob_{\mathbf{p}}(X=a_j) &= \prob_j, \quad j = 1,2, \ldots, k.
+        \end{align*}
+
+        \framebreak
+        
+        \item Soit $X_1, X_2, \ldots, X_n\overset{i.i.d.}{\sim} \Prob_{\mathbf{p}}$, pour un $\mathbf{p}\in\Delta_k$ inconnu, 
+        $\mathbf{p}^{0}\in\Delta^K$ donné.
+        \item On souhaite tester: "$H_0: \mathbf{p} = \mathbf{p}^0$" vs., "$H_1: \mathbf{p} \neq \mathbf{p}^0$" 
+        au niveau asymptotique $\alpha\in(0,1).$
+        \item Exemple: si $\mathbf{p}^0 = (1/k, 1/k, \ldots, 1:k)$, on teste si $\Prob_{\mathbf{p}}$ est la loi uniforme sur $\mathcal{E}$.
+         \framebreak
+         \item Vraisemblance du modèle:
+         \begin{align*}
+             \mathcal{L}_n(X_1, X_2, \ldots, X_n, \boldp) &= \prob_1^{N_1}\prob_{2}^{N_2}\ldots\prob_k^{N_k},
+         \end{align*}
+         où $N_j = \#\left\{i = 1, 2, \ldots, n: X_i=a_j\right\}$.
+         \item Soit $\hat{\boldp}$ l'estimateur du MV: \begin{align*}
+            \hat{\prob} &= \frac{N_j}{n}, \quad j = 1, 2, \ldots, k.
+         \end{align*}
+         \item \textbf{Remarque:} $\hat{\boldp}$ maximise $\mathcal{L}_n(X_1, X_2, \ldots, X_n, \boldp)$ 
+         \textbf{sous la contrainte}, \begin{align*}
+             \sum_{j=1}^k\prob_j &=1.
+         \end{align*}
+         \framebreak 
+         \item Si $H_0$ est vraie, alors $\sqrt{n}(\hat{\boldp} - \boldp^0)$ est asymptotiquement normale, 
+          et le résultat suivant est établi,
+          \item \textbf{\underline{Théorème:}} \begin{align*}
+              \underbrace{n\sum_{j=1}^k\frac{(\hat{\prob}_j - \prob_j^0)^2}{\prob_j^0}}_{T_n}&\limd \chi^2_{k-1}.
+          \end{align*}
+          \item Test du $\chi^2$ de niveau asymptotique $\alpha$ : $\delta_\alpha = \Ind_{T_n>q_{1-\alpha}}$, où $q_{1-\alpha}$ est 
+          quantile d'ordre $1-\alpha$ du $\chi^2_{k-1}$.
+          \item La p-value asymptotique de ce test est: $\prob-\text{value} = \Prob(Z> T_n| T_n)$, où $Z\sim\chi^2_{k-1}$ 
+          et $Z\pperp T_n$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    [allowframebreaks]{Cas Gaussien: test de Student}
+    \begin{itemize}
+        \item Soit $X_1, X_2, \ldots, X_n\simiid\mathcal{N}(\mu, \sigma^2)$ pour $\mu\in\R$, $\sigma^2>0$, 
+         et soit aussi un $\mu_0\in \R$  donné.
+         \item On veut tester: \begin{align*}
+             H_0: "\mu = \mu_0" &\text{vs.} "H_1 : \mu\neq \mu_0,
+         \end{align*}
+         au niveau asymptotique $\alpha\in(0,1)$.
+         \item \textbf{1er cas}: $\sigma^2$ est connu.
+         \begin{enumerate}[-]
+             \item Soit $T_n  = \sqrt{n}\left(\frac{\bar{X}_n - \mu_0}{\sigma}\right)$. 
+             \item Alors $T_n\sim \mathcal{N}(0,1)$ et, 
+             \begin{align*}
+                 \delta_\alpha = \Ind_{\abs{T_n} > q_{1-\alpha / 2}}
+             \end{align*}
+             est un test au niveau(non asymptotique) $\alpha$.
+         \end{enumerate}
+         \framebreak
+         \item \textbf{2ème cas}: $\sigma^2$ est inconnu.
+         \begin{enumerate}[-]
+            \item Soit $\tilde{T}_n  = \sqrt{n - 1}\left(\frac{\bar{X}_n - \mu_0}{\sqrt{S_n}}\right)$, 
+            où $S_n$ est la variance empirique.
+            \item Théorème de Cochran : \begin{enumerate}[-]
+                \item $\bar{X}_n \pperp S_n$;
+                \item $\frac{nS_n}{\sigma^2}\sim\chi^2_{n-1}$.
+            \end{enumerate}
+            \item Et par conséquent, $\tilde{T}_n \sim t_{n-1}$: loi de Student à $n-1$ degrés de liberté.
+            \framebreak
+            \item Test de Student de niveau(non asymptotique) $\alpha\in(0,1)$: 
+            \begin{align*}
+                \delta_\alpha = \Ind_{\abs{\tilde{T}_n} > q_{1-\alpha / 2}},
+            \end{align*}
+            où $q_{1-\alpha / 2}$ est le quantile d'ordre $1-\alpha/2$ de $t_{n-1}$.
+            \item  Si $H_1$ est $"\mu>\mu_0"$, le test de Student de niveau $\alpha\in(0,1)$ est:
+            \begin{align*}
+                \delta^\prime_\alpha = \Ind_{\tilde{T}_n > q_{1-\alpha}},
+            \end{align*}
+            où $q_{1-\alpha}$ est le quantile d'ordre $1-\alpha$ de $t_{n-1}$.
+        \end{enumerate}
+        \item Avantage du test de Student: 
+        \begin{enumerate}[-]
+            \item Non asymptotique.
+            \item Peut être réalisé sur des échantillons petits.
+        \end{enumerate}
+        \item Inconvénients du test de Student: suppose que l'échantillon est gaussien.
+    \end{itemize}
+\end{frame}
+\end{document}
