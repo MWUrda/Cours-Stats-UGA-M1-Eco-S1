@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.11.10)  14 SEP 2022 09:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.11.10)  19 SEP 2022 11:27
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -97,8 +97,8 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 
 Class beamer Warning: This option is obsolete. Use beamer option ``show notes'' instead. on input line 336.
 
-(/usr/local/texlive/2018/texmf-dist/tex/latex/base/size11.clo
-File: size11.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/extsizes/size9.clo
+File: size9.clo 1999/11/11 v1.4a NON-Standard LaTeX file (size option)
 ) (/usr/local/texlive/2018/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty (/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
  (/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/graphics.sty
@@ -1651,7 +1651,7 @@ LaTeX Font Info:    Try loading font information for T1+txss on input line 63.
 File: t1txss.fd 2000/12/15 v3.1
 )
 LaTeX Font Info:    Font shape `T1/txss/m/n' will be
-(Font)              scaled to size 10.40245pt on input line 63.
+(Font)              scaled to size 8.54997pt on input line 63.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -1672,12 +1672,12 @@ LaTeX Font Info:    Font shape `T1/txss/m/n' will be
 * \topmargin=-72.26999pt
 * \headheight=14.22636pt
 * \headsep=0.0pt
-* \topskip=11.0pt
+* \topskip=9.0pt
 * \footskip=14.22636pt
 * \marginparwidth=4.0pt
 * \marginparsep=10.0pt
 * \columnsep=10.0pt
-* \skip\footins=10.0pt plus 4.0pt minus 2.0pt
+* \skip\footins=8.0pt plus 4.0pt minus 2.0pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
 * \mag=1000
@@ -1819,13 +1819,13 @@ Package pgfplots notification 'compat/show suggested version=true': document has
 
 (/Users/michalurdanivia/Documents/GitHub/Cours-Stats-UGA-M1-Eco-S1/Cours/Diapos/Cours_4/Stats_Cours_4.nav)
 LaTeX Font Info:    Font shape `T1/txss/m/n' will be
-(Font)              scaled to size 5.69998pt on input line 63.
+(Font)              scaled to size 4.74998pt on input line 63.
 LaTeX Font Info:    Font shape `T1/txss/m/n' will be
-(Font)              scaled to size 13.67995pt on input line 95.
-LaTeX Font Info:    Font shape `T1/txss/bx/n' will be
-(Font)              scaled to size 13.67995pt on input line 95.
+(Font)              scaled to size 10.40245pt on input line 95.
 LaTeX Font Info:    Font shape `T1/txss/bx/n' will be
 (Font)              scaled to size 10.40245pt on input line 95.
+LaTeX Font Info:    Font shape `T1/txss/bx/n' will be
+(Font)              scaled to size 8.54997pt on input line 95.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `cmss' (encoding: OT1).
 (microtype)             For optimal results, create family-specific settings.
@@ -1857,21 +1857,15 @@ LaTeX Font Info:    Try loading font information for U+rsfs on input line 95.
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 )
 LaTeX Font Info:    Font shape `T1/txss/m/n' will be
-(Font)              scaled to size 7.59998pt on input line 95.
-LaTeX Font Info:    Font shape `T1/txss/m/it' in size <10.95> not available
+(Font)              scaled to size 5.69998pt on input line 95.
+LaTeX Font Info:    Font shape `T1/txss/m/it' in size <9> not available
 (Font)              Font shape `T1/txss/m/sl' tried instead on input line 95.
 LaTeX Font Info:    Font shape `T1/txss/m/sl' will be
-(Font)              scaled to size 10.40245pt on input line 95.
-LaTeX Font Info:    Font shape `T1/txss/m/it' in size <8> not available
-(Font)              Font shape `T1/txss/m/sl' tried instead on input line 95.
-LaTeX Font Info:    Font shape `T1/txss/m/sl' will be
-(Font)              scaled to size 7.59998pt on input line 95.
+(Font)              scaled to size 8.54997pt on input line 95.
 LaTeX Font Info:    Font shape `T1/txss/m/it' in size <6> not available
 (Font)              Font shape `T1/txss/m/sl' tried instead on input line 95.
 LaTeX Font Info:    Font shape `T1/txss/m/sl' will be
 (Font)              scaled to size 5.69998pt on input line 95.
-LaTeX Font Info:    Font shape `T1/txss/m/n' will be
-(Font)              scaled to size 4.74998pt on input line 95.
 LaTeX Font Info:    Font shape `T1/txss/m/it' in size <5> not available
 (Font)              Font shape `T1/txss/m/sl' tried instead on input line 95.
 LaTeX Font Info:    Font shape `T1/txss/m/sl' will be
@@ -1892,19 +1886,13 @@ LaTeX Warning: The counter will not be printed.
              The label is: - on input line 124.
 
 LaTeX Font Info:    Font shape `T1/txss/m/n' will be
-(Font)              scaled to size 9.49997pt on input line 124.
-LaTeX Font Info:    Font shape `T1/txss/m/n' will be
-(Font)              scaled to size 6.64998pt on input line 124.
-LaTeX Font Info:    Font shape `T1/txss/m/it' in size <10> not available
+(Font)              scaled to size 7.59998pt on input line 124.
+LaTeX Font Info:    Font shape `T1/txss/m/it' in size <8> not available
 (Font)              Font shape `T1/txss/m/sl' tried instead on input line 124.
 LaTeX Font Info:    Font shape `T1/txss/m/sl' will be
-(Font)              scaled to size 9.49997pt on input line 124.
-LaTeX Font Info:    Font shape `T1/txss/m/it' in size <7> not available
-(Font)              Font shape `T1/txss/m/sl' tried instead on input line 124.
-LaTeX Font Info:    Font shape `T1/txss/m/sl' will be
-(Font)              scaled to size 6.64998pt on input line 124.
+(Font)              scaled to size 7.59998pt on input line 124.
 LaTeX Font Info:    Font shape `T1/txss/bx/n' will be
-(Font)              scaled to size 9.49997pt on input line 124.
+(Font)              scaled to size 7.59998pt on input line 124.
 [5
 
 ]
@@ -1932,44 +1920,41 @@ File: t1txr.fd 2000/12/15 v3.1
 
 ] [13
 
+] (/Users/michalurdanivia/Documents/GitHub/Cours-Stats-UGA-M1-Eco-S1/Cours/Diapos/Cours_4/Stats_Cours_4.toc) [14
 
-] [14
-
-] (/Users/michalurdanivia/Documents/GitHub/Cours-Stats-UGA-M1-Eco-S1/Cours/Diapos/Cours_4/Stats_Cours_4.toc) [15
-
-] [16
+] [15
 
 ]
 
 LaTeX Warning: The counter will not be printed.
              The label is: - on input line 301.
 
-[17
+[16
 
-] [18
+] [17
 
 
 ]
-LaTeX Font Info:    Font shape `T1/txss/m/it' in size <14.4> not available
+LaTeX Font Info:    Font shape `T1/txss/m/it' in size <10.95> not available
 (Font)              Font shape `T1/txss/m/sl' tried instead on input line 324.
 LaTeX Font Info:    Font shape `T1/txss/m/sl' will be
-(Font)              scaled to size 13.67995pt on input line 324.
- [19
+(Font)              scaled to size 10.40245pt on input line 324.
+ [18
+
+] [19
+
 
 ] [20
 
 
 ] [21
 
-
-] [22
-
 ]
 
 LaTeX Warning: The counter will not be printed.
              The label is: - on input line 351.
 
-[23
+[22
 
 ]
 \tf@nav=\write7
@@ -1990,18 +1975,18 @@ Package rerunfilecheck Info: File `Stats_Cours_4.out' has not changed.
 (rerunfilecheck)             Checksum: 38F2A873652B514201437CA17FA7D1B4;104.
  ) 
 Here is how much of TeX's memory you used:
- 48955 strings out of 492649
- 1096801 string characters out of 6129621
- 1348175 words of memory out of 5000000
- 51796 multiletter control sequences out of 15000+600000
- 627875 words of font info for 213 fonts, out of 8000000 for 9000
+ 48886 strings out of 492649
+ 1095619 string characters out of 6129621
+ 1349074 words of memory out of 5000000
+ 51736 multiletter control sequences out of 15000+600000
+ 606972 words of font info for 178 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  78i,19n,136p,10535b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/txex.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/txexa.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/txsy.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/txsyb.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/txsyc.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
-Output written on /Users/michalurdanivia/Documents/GitHub/Cours-Stats-UGA-M1-Eco-S1/Cours/Diapos/Cours_4/Stats_Cours_4.pdf (23 pages, 100767 bytes).
+{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/txex.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/txexa.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/txsy.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/txsyb.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/txfonts/txsyc.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
+Output written on /Users/michalurdanivia/Documents/GitHub/Cours-Stats-UGA-M1-Eco-S1/Cours/Diapos/Cours_4/Stats_Cours_4.pdf (22 pages, 99986 bytes).
 PDF statistics:
- 222 PDF objects out of 1000 (max. 8388607)
- 175 compressed objects within 2 object streams
- 49 named destinations out of 1000 (max. 500000)
- 68673 words of extra memory for PDF output out of 74296 (max. 10000000)
+ 216 PDF objects out of 1000 (max. 8388607)
+ 170 compressed objects within 2 object streams
+ 47 named destinations out of 1000 (max. 500000)
+ 58433 words of extra memory for PDF output out of 61914 (max. 10000000)
 
