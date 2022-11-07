@@ -10,3 +10,4 @@ jupyterlab==3.0.14
 notebook==6.3.0
 pandas
 statsmodels
+seaborn
